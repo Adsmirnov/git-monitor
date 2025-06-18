@@ -7,6 +7,7 @@ import java.util.Date;
 
 @Data
 public class Commit {
+    private int id;
     private Time time;
     private Date date;
     private String branch;
