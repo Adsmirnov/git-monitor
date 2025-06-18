@@ -1,4 +1,4 @@
-package gitactivity.main.services;
+package gitactivity.main;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -14,7 +14,7 @@ public class GithubApiService {
         Request request = new Request.Builder()
                 .url("https://api.github.com/repos/adsmirnov/git-monitor/commits")
                 .addHeader("Accept", "application/vnd.github+json")
-                .addHeader("Authorization", "Bearer ")
+                .addHeader("Authorization", "Bearer " + System.getProperty("GITHUB_API_KEY"))
                 .addHeader("X-GitHub-Api-Version", "2022-11-28")
                 .build();
 
