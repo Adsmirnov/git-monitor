@@ -5,9 +5,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class User {
+public class Admin {
     private String login;
     private String password;
-    private List<Commit> userCommits;
-
+    private List<User> users;
 }
