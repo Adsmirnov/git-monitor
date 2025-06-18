@@ -11,7 +11,7 @@ public class Commit {
     private Date date;
     private String branch;
     private int changedLines;
-    private String author;
+    private String user;
     private String comment;
 
 
