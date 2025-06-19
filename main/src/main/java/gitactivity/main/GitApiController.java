@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 @RequestMapping("/api")
-public class GithubApiController {
+public class GitApiController {
 
     @Autowired
-    private GithubApiService githubApiService;
+    private GitApiService gitApiService;
 
     @GetMapping("/get/commits")
     public String getCommits() {
-        String data = githubApiService.getProcessedData();
+        String data = gitApiService.getProcessedData();
         return data;
     }
 }
