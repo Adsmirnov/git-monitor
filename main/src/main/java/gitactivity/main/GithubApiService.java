@@ -3,12 +3,14 @@ package gitactivity.main;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+@Service
 public class GithubApiService {
 
-    private static void testQuery() throws IOException {
+    public String makeRequest() {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -23,10 +25,12 @@ public class GithubApiService {
                 throw new IOException("Запрос к серверу не был успешен: " +
                         response.code() + " " + response.message());
             }
-            System.out.println("Server: " + response.header("Server"));
-            System.out.println(response.body().string());
+//            System.out.println("Server: " + response.header("Server"));
+//            System.out.println(response.body().string());
+            return response.body().string();
         } catch (IOException e) {
-            System.out.println("Ошибка подключения: " + e);
+//            System.out.println("Ошибка подключения: " + e);
+            return "Ошибка подключения: " + e;
         }
     }
 
