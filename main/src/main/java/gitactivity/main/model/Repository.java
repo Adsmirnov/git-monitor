@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class Repository {
-    private String link;
-    private List<Commit> commits;
+    private int id;
+    private String url;
+    private String sha;
 }
