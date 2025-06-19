@@ -1,37 +1,26 @@
 package gitactivity.main;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.Map;
 
 @Service
 public class GithubApiService {
 
-    Map<String, String> env = System.getenv();
+    @Autowired
+    GithubApiRepository githubApiRepository;
 
-    public String makeRequest() {
-        OkHttpClient client = new OkHttpClient();
+    public String getProcessedData() {
+        String rawApiData = githubApiRepository.getGithubData();
+        JSONArray jsonArray = new JSONArray(rawApiData);
 
-        Request request = new Request.Builder()
-                .url("https://api.github.com/repos/adsmirnov/git-monitor/commits")
-                .addHeader("Accept", "application/vnd.github+json")
-                .addHeader("Authorization", "Bearer " + env.get("GITHUB_API_KEY"))
-                .addHeader("X-GitHub-Api-Version", "2022-11-28")
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Запрос к серверу не был успешен: " +
-                        response.code() + " " + response.message() + env.get("GITHUB_API_KEY"));
-            }
-            return response.body().string();
-        } catch (IOException e) {
-            return "Ошибка подключения: " + e;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject currentCommit = (JSONObject) jsonArray.get(i);
+            System.out.println(currentCommit);
         }
+
+        return rawApiData;
     }
 
 }

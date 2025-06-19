@@ -16,7 +16,7 @@ public class GithubApiController {
 
     @GetMapping("/get/commits")
     public String getCommits() {
-        String data = githubApiService.makeRequest();
+        String data = githubApiService.getProcessedData();
         return data;
     }
 }
