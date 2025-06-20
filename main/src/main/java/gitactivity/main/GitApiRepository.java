@@ -11,13 +11,15 @@ import java.util.Map;
 @Repository
 public class GitApiRepository {
 
+    private final String groupLink = "https://gitlab.com/api/v4/groups/109642057";
+    private final OkHttpClient client = new OkHttpClient();
+
     Map<String, String> env = System.getenv();
 
     public String getGitData() {
-        OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url("https://gitlab.com/api/v4/groups/109642057")
+                .url(groupLink)
                 .addHeader("PRIVATE-TOKEN", env.get("GIT_API_KEY"))
                 .build();
 
