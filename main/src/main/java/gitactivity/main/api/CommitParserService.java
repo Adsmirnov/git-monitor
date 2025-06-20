@@ -28,6 +28,8 @@ public class CommitParserService {
                 commit.setId((String) currentCommit.get("id"));
                 commit.setUser((String) currentCommit.get("committer_name"));
                 commit.setComment((String) currentCommit.get("message"));
+                parsedCommits.add(commit);
+
                 System.out.println("[COMMIT] " + commit);
             }
         }
