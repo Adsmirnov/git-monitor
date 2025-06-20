@@ -28,7 +28,7 @@ public class GitApiRepository {
                 throw new IOException("Запрос к серверу не был успешен: " +
                         response.code() + " " + response.message() + env.get("GIT_API_KEY"));
             }
-            return response.body().string();
+            return response.peekBody(Long.MAX_VALUE).string();
         } catch (IOException e) {
             return "Ошибка подключения: " + e;
         }

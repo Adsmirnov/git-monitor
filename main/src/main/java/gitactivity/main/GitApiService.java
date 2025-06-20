@@ -25,7 +25,7 @@ public class GitApiService {
 
     private ArrayList<Integer> getRepoIds(String rawApiData) {
         JSONObject group = new JSONObject(rawApiData);
-        System.out.println(group);
+//        System.out.println(group);
 
         ArrayList<Integer> repoIds = new ArrayList<>();
 
@@ -55,7 +55,7 @@ public class GitApiService {
                     throw new IOException("Запрос к серверу не был успешен: " +
                             response.code() + " " + response.message() + env.get("GIT_API_KEY"));
                 }
-                repoCommits.add(response.body().string());
+                repoCommits.add(response.peekBody(Long.MAX_VALUE).string());
             } catch (IOException e) {
                 System.out.println(e);
             }
@@ -63,14 +63,15 @@ public class GitApiService {
         return repoCommits;
     }
 
-    public String getProcessedData() {
+    public ArrayList<String> getProcessedData() {
         String rawApiData = gitApiRepository.getGitData();
 
         ArrayList<Integer> repoIds = getRepoIds(rawApiData);
 
-        System.out.println("Commits: " + getCommitsFromRepos(repoIds));
+        ArrayList<String> allCommits = getCommitsFromRepos(repoIds);
+//        System.out.println("[LOG] All commits: " + allCommits);
 
-        return rawApiData;
+        return allCommits;
     }
 
 }
