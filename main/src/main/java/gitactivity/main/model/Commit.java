@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 public class Commit {
-    private int id;
+    private String id;
     private LocalDateTime date;
     private int changedLines;
     private String user;
