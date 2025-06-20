@@ -16,7 +16,7 @@ public class GitApiRepository {
 
     Map<String, String> env = System.getenv();
 
-    public String getGitData() {
+    public String getGitData() {  // Метод для создания запроса в GitLab API
 
         Request request = new Request.Builder()
                 .url(groupLink)

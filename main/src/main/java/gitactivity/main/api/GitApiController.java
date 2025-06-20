@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @RestController
 @CrossOrigin
 @RequestMapping("/api")
-public class GitApiController {
+public class GitApiController {  // Класс создан для тестов программы, в конечном результате будет убран
 
     @Autowired
     private GitApiService gitApiService;
