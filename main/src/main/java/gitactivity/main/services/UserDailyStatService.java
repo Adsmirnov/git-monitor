@@ -20,11 +20,11 @@ public class UserDailyStatService {
     private UserDailyStatRepository userDailyStatRepository;
 
     @Transactional
-    public UserDailyStat saveDailyStat(UserDailyStat stat) {
+    public UserDailyStat saveDailyStat(UserDailyStat stat) {  // Метод для создания и заполнения новой ячейке в базе данных
         return userDailyStatRepository.save(stat);
     }
 
-    public List<UserDailyStat> getUserDailyStat(String login, LocalDateTime date) {
+    public List<UserDailyStat> getUserDailyStat(String login, LocalDateTime date) {  // Метод для получения статистики данного пользователя за день
         return userDailyStatRepository.findByLoginAndDate(login, date);
     }
 

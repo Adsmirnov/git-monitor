@@ -15,16 +15,14 @@ import java.util.Optional;
 public class UserService {
     private UserRepository userRepository;
 
-    public List<User> getUsers() {
+    public List<User> getUsers() {  // Метод для получения белого списка
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(long id) {
+    public Optional<User> getUserById(long id) {  // Метод для получения пользователя по айди
         return userRepository.findById(id);
     }
-
-    @Transactional
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public List<User> getUserByLogin(String login) {  // Метод для получения пользователя по логину
+        return userRepository.findUserByLogin(login);
     }
 }

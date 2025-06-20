@@ -16,11 +16,11 @@ public class UserHourlyStatService {
     @Autowired
     private UserHourlyStatRepository userHourlyStatRepository;
 
-    public UserHourlyStat saveUserHourlyStat(UserHourlyStat stat) {
+    public UserHourlyStat saveUserHourlyStat(UserHourlyStat stat) {  // Метод для создания и заполнения новой ячейки в базе данных
         return userHourlyStatRepository.save(stat);
     }
 
-    public List<UserHourlyStat> getUserHourlyStat(String login, LocalDateTime date) {
+    public List<UserHourlyStat> getUserHourlyStat(String login, LocalDateTime date) {  // Метод для получения статистики данного пользователя за данный час данного дня
         return userHourlyStatRepository.findByLoginAndDateAndHour(login, date, date.getHour());
     }
 }

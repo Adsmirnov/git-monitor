@@ -17,16 +17,16 @@ public class RepositoryService {
     @Autowired
     private RepositoryRepository repositoryRepository;
 
-    public List<Repository> getRepositories() {
+    public List<Repository> getRepositories() {  // Метод для получения списка всех репозиториев из базы данных
         return repositoryRepository.findAll();
     }
 
-    public Optional<Repository> getRepositoryById(Long id) {
+    public Optional<Repository> getRepositoryById(Long id) { // Метод для поиска репозитория по айди
         return repositoryRepository.findById(id);
     }
 
     @Transactional
-    public Repository createRepository(Repository repository) {
+    public Repository createRepository(Repository repository) {  // Метод для создания ячейки с репозиторием в базе данных
         return repositoryRepository.save(repository);
     }
 
