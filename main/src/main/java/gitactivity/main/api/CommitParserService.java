@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 @Service
@@ -29,6 +31,13 @@ public class CommitParserService {
                 commit.setId((String) currentCommit.get("id"));
                 commit.setUser((String) currentCommit.get("committer_name"));
                 commit.setComment((String) currentCommit.get("message"));
+
+                String dateTime = (String) currentCommit.get("committed_date");
+                dateTime = dateTime.substring(0, 19);
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+                LocalDateTime parsedDate = LocalDateTime.parse(dateTime, formatter);
+                LocalDateTime parsedDateLocal = parsedDate.plusHours(3);
+                commit.setDate(parsedDateLocal);
                 parsedCommits.add(commit);
 
                 System.out.println("[COMMIT] " + commit);
