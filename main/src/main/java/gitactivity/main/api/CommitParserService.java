@@ -20,8 +20,8 @@ public class CommitParserService {
         parsedCommits.clear();
         ArrayList<String> allCommits = gitApiService.getProcessedData();
         System.out.println("[COMMITS]");
-        for (int i = 0; i < allCommits.size(); i++) {
-            JSONArray currentRepoCommits = new JSONArray(allCommits.get(i));
+        for (String allCommit : allCommits) {
+            JSONArray currentRepoCommits = new JSONArray(allCommit);
             for (int j = 0; j < currentRepoCommits.length(); j++) {
                 JSONObject currentCommit = new JSONObject(currentRepoCommits.get(j).toString());
 
