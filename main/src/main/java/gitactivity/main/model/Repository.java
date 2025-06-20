@@ -1,8 +1,6 @@
 package gitactivity.main.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
@@ -11,6 +9,9 @@ import java.util.List;
 @Table(name = "repositories")
 @Data
 public class Repository {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
@@ -19,4 +20,6 @@ public class Repository {
 
     @Column(name = "sha")
     private String sha;
+
+
 }
