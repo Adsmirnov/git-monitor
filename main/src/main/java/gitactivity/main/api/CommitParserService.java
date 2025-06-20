@@ -11,12 +11,13 @@ import java.util.ArrayList;
 @Service
 public class CommitParserService {
 
+    private ArrayList<Commit> parsedCommits = new ArrayList<>();
+
     @Autowired
     GitApiService gitApiService;
 
     public ArrayList<Commit> getParsedCommits() {
-        ArrayList<Commit> parsedCommits = new ArrayList<>();
-
+        parsedCommits.clear();
         ArrayList<String> allCommits = gitApiService.getProcessedData();
         System.out.println("[COMMITS]");
         for (int i = 0; i < allCommits.size(); i++) {
