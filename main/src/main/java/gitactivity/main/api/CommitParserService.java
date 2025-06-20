@@ -1,4 +1,4 @@
-package gitactivity.main;
+package gitactivity.main.api;
 
 import gitactivity.main.model.Commit;
 import org.json.JSONArray;

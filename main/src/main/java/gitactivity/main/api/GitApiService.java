@@ -1,4 +1,4 @@
-package gitactivity.main;
+package gitactivity.main.api;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
