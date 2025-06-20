@@ -17,14 +17,16 @@ public class GitApiRepository {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url("https://gitlab.com/api/v4/groups/109642057")
-                .addHeader("PRIVATE-TOKEN", env.get("GIT_API_KEY"))
+                .url("https://api.github.com/repos/adsmirnov/git-monitor/commits")
+                .addHeader("Accept", "application/vnd.github+json")
+                .addHeader("Authorization", "Bearer " + env.get("GIT_API_KEY"))
+                .addHeader("X-GitHub-Api-Version", "2022-11-28")
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Запрос к серверу не был успешен: " +
-                        response.code() + " " + response.message() + env.get("GIT_API_KEY"));
+                        response.code() + " " + response.message() + env.get("GITHUB_API_KEY"));
             }
             return response.body().string();
         } catch (IOException e) {
