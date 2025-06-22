@@ -57,6 +57,7 @@ public class GitApiService {
                     .addPathSegment("commits")
                     .addQueryParameter("since", since.toString())
                     .addQueryParameter("until", until.toString())
+                    .addQueryParameter("all", "true")
                     .build();
 
             Request request = new Request.Builder()
@@ -85,7 +86,7 @@ public class GitApiService {
         // для тестирования получения данных за временной промежуток
         // время указывается в МСК (UTC+3)
         // minusHours(3) - поправка на UTC
-        LocalDateTime since = LocalDateTime.parse("2025-06-20T10:00:00").minusHours(3);
+        LocalDateTime since = LocalDateTime.parse("2024-06-20T10:00:00").minusHours(3);
         LocalDateTime until = LocalDateTime.parse("2025-06-22T12:16:00").minusHours(3);
 
         ArrayList<String> allCommits = getCommitsFromRepos(repoIds, since, until);
