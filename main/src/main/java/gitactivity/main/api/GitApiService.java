@@ -1,5 +1,6 @@
 package gitactivity.main.api;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -9,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 
 @Service
 public class GitApiService {
 
-    private final String baseApiLink = "https://gitlab.com/api/v4/projects/";
     private final OkHttpClient client = new OkHttpClient();
 
     Map<String, String> env = System.getenv();
@@ -41,12 +42,25 @@ public class GitApiService {
         return repoIds;
     }
 
-    private ArrayList<String> getCommitsFromRepos(ArrayList<Integer> repoIds) {  // Метод для получения всех коммитов группы
+    private ArrayList<String> getCommitsFromRepos(ArrayList<Integer> repoIds, LocalDateTime since, LocalDateTime until) {  // Метод для получения всех коммитов группы
         ArrayList<String> repoCommits = new ArrayList<>();
 
         for (Integer repoId : repoIds) {
+            HttpUrl repoUrl = new HttpUrl.Builder()
+                    .scheme("https")
+                    .host("gitlab.com")
+                    .addPathSegment("api")
+                    .addPathSegment("v4")
+                    .addPathSegment("projects")
+                    .addPathSegment(repoId.toString())
+                    .addPathSegment("repository")
+                    .addPathSegment("commits")
+                    .addQueryParameter("since", since.toString())
+                    .addQueryParameter("until", until.toString())
+                    .build();
+
             Request request = new Request.Builder()
-                    .url(baseApiLink + repoId + "/repository/commits")
+                    .url(repoUrl)
                     .addHeader("PRIVATE-TOKEN", env.get("GIT_API_KEY"))
                     .build();
 
@@ -68,7 +82,13 @@ public class GitApiService {
 
         ArrayList<Integer> repoIds = getRepoIds(rawApiData);
 
-        ArrayList<String> allCommits = getCommitsFromRepos(repoIds);
+        // для тестирования получения данных за временной промежуток
+        // время указывается в МСК (UTC+3)
+        // minusHours(3) - поправка на UTC
+        LocalDateTime since = LocalDateTime.parse("2025-06-20T10:00:00").minusHours(3);
+        LocalDateTime until = LocalDateTime.parse("2025-06-22T12:16:00").minusHours(3);
+
+        ArrayList<String> allCommits = getCommitsFromRepos(repoIds, since, until);
 //        System.out.println("[LOG] All commits: " + allCommits);
 
         return allCommits;
