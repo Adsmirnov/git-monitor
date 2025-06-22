@@ -31,11 +31,15 @@ public class GitApiService {
         ArrayList<Integer> repoIds = new ArrayList<>();
 
         JSONArray projects = new JSONArray(group.get("projects").toString());
+
+        System.out.println("[REPOS]");
         for (int i = 0; i < projects.length(); i++) {
             JSONObject currentRepo = (JSONObject) projects.get(i);
 
             Integer currentRepoId = (Integer) currentRepo.get("id");
+
             repoIds.add(currentRepoId);
+            System.out.println("[REPO] " + currentRepoId);
         }
 
 //        System.out.println(repoIds);
@@ -46,6 +50,8 @@ public class GitApiService {
         ArrayList<String> repoCommits = new ArrayList<>();
 
         for (Integer repoId : repoIds) {
+
+            // построение ссылки на репозиторий
             HttpUrl repoUrl = new HttpUrl.Builder()
                     .scheme("https")
                     .host("gitlab.com")

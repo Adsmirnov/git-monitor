@@ -21,6 +21,7 @@ public class CommitParserService {
     public ArrayList<Commit> getParsedCommits() {
         parsedCommits.clear();
         ArrayList<String> allCommits = gitApiService.getProcessedData();
+
         System.out.println("[COMMITS]");
         for (String allCommit : allCommits) {
             JSONArray currentRepoCommits = new JSONArray(allCommit);
@@ -28,18 +29,20 @@ public class CommitParserService {
                 JSONObject currentCommit = new JSONObject(currentRepoCommits.get(j).toString());
 
                 Commit commit = new Commit();
+
                 commit.setId((String) currentCommit.get("id"));
                 commit.setUser((String) currentCommit.get("committer_name"));
                 commit.setComment((String) currentCommit.get("message"));
 
+                // работа с датой
                 String dateTime = (String) currentCommit.get("committed_date");
                 dateTime = dateTime.substring(0, 19);
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
                 LocalDateTime parsedDate = LocalDateTime.parse(dateTime, formatter);
                 LocalDateTime parsedDateLocal = parsedDate.plusHours(3);
                 commit.setDate(parsedDateLocal);
-                parsedCommits.add(commit);
 
+                parsedCommits.add(commit);
                 System.out.println("[COMMIT] " + commit);
             }
         }
