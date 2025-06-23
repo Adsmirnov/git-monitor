@@ -10,18 +10,20 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class CommitParserService {
 
-    private ArrayList<Commit> parsedCommits = new ArrayList<>();
+    private HashMap<String, ArrayList<Commit>> parsedCommits = new HashMap<>();
 
     @Autowired
     GitApiService gitApiService;
 
-    public ArrayList<Commit> getParsedCommits() {
-        parsedCommits.clear();
-        ArrayList<Pair<Integer, String>> allCommits = gitApiService.getProcessedData();
+    public Map<String, ArrayList<Commit>> getParsedCommits(LocalDateTime since, LocalDateTime until) {
+//        parsedCommits.clear();
+        ArrayList<Pair<Integer, String>> allCommits = gitApiService.getProcessedData(since, until);
 
         System.out.println("[COMMITS]");
         for (int i = 0; i < allCommits.size(); i++) {
@@ -50,7 +52,15 @@ public class CommitParserService {
                 LocalDateTime parsedDateLocal = parsedDate.plusHours(3);
                 commit.setDate(parsedDateLocal);
 
-                parsedCommits.add(commit);
+                try {
+                    ArrayList<Commit> commits = parsedCommits.get(commit.getUser());
+                    commits.add(commit);
+                    parsedCommits.put(commit.getUser(), commits);
+                } catch (Exception e) {
+                    ArrayList<Commit> commits = new ArrayList<>();
+                    commits.add(commit);
+                    parsedCommits.put(commit.getUser(), commits);
+                }
                 System.out.println("[COMMIT] " + commit);
             }
         }
