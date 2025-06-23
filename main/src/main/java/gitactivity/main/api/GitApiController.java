@@ -1,5 +1,6 @@
 package gitactivity.main.api;
 
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +21,8 @@ public class GitApiController {  // Класс создан для тестов 
     private CommitParserService commitParserService;
 
     @GetMapping("/get/commits")
-    public ArrayList<String> getCommits() {
-        ArrayList<String> data = gitApiService.getProcessedData();
+    public ArrayList<Pair<Integer, String>> getCommits() {
+        ArrayList<Pair<Integer, String>> data = gitApiService.getProcessedData();
         commitParserService.getParsedCommits();
         return data;
     }

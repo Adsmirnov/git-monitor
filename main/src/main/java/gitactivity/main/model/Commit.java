@@ -9,6 +9,7 @@ import java.util.Date;
 @Data
 public class Commit {
     private String id;
+    private int repoId;
     private LocalDateTime date;
     private int changedLines;
     private String user;

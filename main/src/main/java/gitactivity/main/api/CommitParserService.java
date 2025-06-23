@@ -1,6 +1,7 @@
 package gitactivity.main.api;
 
 import gitactivity.main.model.Commit;
+import org.javatuples.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,13 @@ public class CommitParserService {
 
     public ArrayList<Commit> getParsedCommits() {
         parsedCommits.clear();
-        ArrayList<String> allCommits = gitApiService.getProcessedData();
+        ArrayList<Pair<Integer, String>> allCommits = gitApiService.getProcessedData();
 
         System.out.println("[COMMITS]");
-        for (String allCommit : allCommits) {
+        for (int i = 0; i < allCommits.size(); i++) {
+            Integer repoId = allCommits.get(i).getValue0();
+            String allCommit = allCommits.get(i).getValue1();
+
             JSONArray currentRepoCommits = new JSONArray(allCommit);
             for (int j = 0; j < currentRepoCommits.length(); j++) {
                 JSONObject currentCommit = new JSONObject(currentRepoCommits.get(j).toString());
@@ -31,6 +35,7 @@ public class CommitParserService {
                 Commit commit = new Commit();
 
                 commit.setId((String) currentCommit.get("id"));
+                commit.setRepoId(repoId);
                 commit.setUser((String) currentCommit.get("committer_name"));
                 commit.setComment((String) currentCommit.get("message"));
 

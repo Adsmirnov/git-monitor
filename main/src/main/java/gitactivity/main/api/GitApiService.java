@@ -4,6 +4,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.javatuples.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,8 @@ public class GitApiService {
         return repoIds;
     }
 
-    private ArrayList<String> getCommitsFromRepos(ArrayList<Integer> repoIds, LocalDateTime since, LocalDateTime until) {  // Метод для получения всех коммитов группы
-        ArrayList<String> repoCommits = new ArrayList<>();
+    private ArrayList<Pair<Integer, String>> getCommitsFromRepos(ArrayList<Integer> repoIds, LocalDateTime since, LocalDateTime until) {  // Метод для получения всех коммитов группы
+        ArrayList<Pair<Integer, String>> repoCommits = new ArrayList<>();
 
         for (Integer repoId : repoIds) {
 
@@ -76,7 +77,7 @@ public class GitApiService {
                     throw new IOException("Запрос к серверу не был успешен: " +
                             response.code() + " " + response.message() + env.get("GIT_API_KEY"));
                 }
-                repoCommits.add(response.peekBody(Long.MAX_VALUE).string());
+                repoCommits.add(new Pair<Integer, String>(repoId, response.peekBody(Long.MAX_VALUE).string()));
             } catch (IOException e) {
                 System.out.println(e);
             }
@@ -84,7 +85,7 @@ public class GitApiService {
         return repoCommits;
     }
 
-    public ArrayList<String> getProcessedData() {  // Общий публичный метод для получения всех коммитов группы
+    public ArrayList<Pair<Integer, String>> getProcessedData() {  // Общий публичный метод для получения всех коммитов группы
         String rawApiData = gitApiRepository.getGitData();
 
         ArrayList<Integer> repoIds = getRepoIds(rawApiData);
@@ -93,9 +94,9 @@ public class GitApiService {
         // время указывается в МСК (UTC+3)
         // minusHours(3) - поправка на UTC
         LocalDateTime since = LocalDateTime.parse("2024-06-20T10:00:00").minusHours(3);
-        LocalDateTime until = LocalDateTime.parse("2025-06-22T12:16:00").minusHours(3);
+        LocalDateTime until = LocalDateTime.parse("2025-06-28T12:16:00").minusHours(3);
 
-        ArrayList<String> allCommits = getCommitsFromRepos(repoIds, since, until);
+        ArrayList<Pair<Integer, String>> allCommits = getCommitsFromRepos(repoIds, since, until);
 //        System.out.println("[LOG] All commits: " + allCommits);
 
         return allCommits;
