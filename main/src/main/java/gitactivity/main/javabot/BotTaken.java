@@ -1,4 +1,4 @@
-package com.example.javabot;
+package gitactivity.main.javabot;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;

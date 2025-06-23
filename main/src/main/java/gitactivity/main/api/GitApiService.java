@@ -119,18 +119,12 @@ public class GitApiService {
         return changedLines;
     }
 
-    public ArrayList<Pair<Integer, String>> getProcessedData() {  // Общий публичный метод для получения всех коммитов группы
+    public ArrayList<Pair<Integer, String>> getProcessedData(LocalDateTime since, LocalDateTime until) {  // Общий публичный метод для получения всех коммитов группы
         String rawApiData = gitApiRepository.getGitData();
 
         ArrayList<Integer> repoIds = getRepoIds(rawApiData);
 
-        // для тестирования получения данных за временной промежуток
-        // время указывается в МСК (UTC+3)
-        // minusHours(3) - поправка на UTC
-        LocalDateTime since = LocalDateTime.parse("2024-06-20T10:00:00").minusHours(3);
-        LocalDateTime until = LocalDateTime.parse("2025-06-28T12:16:00").minusHours(3);
-
-        ArrayList<Pair<Integer, String>> allCommits = getCommitsFromRepos(repoIds, since, until);
+        ArrayList<Pair<Integer, String>> allCommits = getCommitsFromRepos(repoIds, since.minusHours(3), until.minusHours(3));
 //        System.out.println("[LOG] All commits: " + allCommits);
 
         return allCommits;

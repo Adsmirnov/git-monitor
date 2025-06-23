@@ -19,9 +19,9 @@ public class CommitParserService {
     @Autowired
     GitApiService gitApiService;
 
-    public ArrayList<Commit> getParsedCommits() {
+    public ArrayList<Commit> getParsedCommits(LocalDateTime since, LocalDateTime until) {
         parsedCommits.clear();
-        ArrayList<Pair<Integer, String>> allCommits = gitApiService.getProcessedData();
+        ArrayList<Pair<Integer, String>> allCommits = gitApiService.getProcessedData(since, until);
 
         System.out.println("[COMMITS]");
         for (int i = 0; i < allCommits.size(); i++) {
