@@ -22,7 +22,7 @@ public class CommitParserService {
     GitApiService gitApiService;
 
     public Map<String, ArrayList<Commit>> getParsedCommits(LocalDateTime since, LocalDateTime until) {
-//        parsedCommits.clear();
+        parsedCommits.clear();
         ArrayList<Pair<Integer, String>> allCommits = gitApiService.getProcessedData(since, until);
 
         System.out.println("[COMMITS]");
