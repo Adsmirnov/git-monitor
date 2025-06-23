@@ -50,9 +50,23 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             case "name" -> sendSpisok(chatId);
             case "day" -> sendDay(chatId);
             case "month" -> sendMonth(chatId);
-            default -> sendText(chatId, "Не понял гойду");
+            default -> {if (data.startsWith("name_")){
+                namegraff(chatId, data);
+            }else{
+                sendText(chatId, "Не понял гойду");
+            } }
         }
     }
+
+    private void namegraff(Long chatId, String data) {
+        SendMessage message = SendMessage.builder().text("Объект для гойдирования " + data.substring(5)).chatId(chatId).build();
+        try {
+            telegramClient.execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private void sendText(Long chatId, String massegtext) {
         SendMessage message = SendMessage.builder().text(massegtext).chatId(chatId).build();
