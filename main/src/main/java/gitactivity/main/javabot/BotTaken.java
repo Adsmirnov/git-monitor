@@ -5,6 +5,8 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 
+import java.util.Map;
+
 @Component
 public class BotTaken implements SpringLongPollingBot {
 
@@ -15,10 +17,11 @@ public class BotTaken implements SpringLongPollingBot {
         this.updateSoob = updateSoob;
     }
 
+    private Map<String, String> env = System.getenv();
 
     @Override
     public String getBotToken() {
-        return "7782840064:AAHCj2E3t1fy-drqh-d72iYu__EBTI2B8Gc";
+        return env.get("TG_BOT_TOKEN");
     }
 
     @Override
