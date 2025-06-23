@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -71,7 +72,24 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void sendSpisok(Long chatId) {
-        sendText(chatId,"Гойда на человека");
+        String [] names = new String[] {"Иван", "Игорь"};
+        nameButton(chatId,names);
+    }
+
+    private void nameButton(Long chatId, String[] names) {
+        SendMessage message = SendMessage.builder().text("Выберите сотрудника").chatId(chatId).build();
+        List<InlineKeyboardRow> buttons = new ArrayList<>();
+        for (String name : names) {
+            var button = InlineKeyboardButton.builder().text(name).callbackData("name_" + name).build();
+            buttons.add( new InlineKeyboardRow(button) );
+        }
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup(buttons);
+        message.setReplyMarkup(markup);
+        try {
+            telegramClient.execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void  sendMainMenu(Long getchatid){
