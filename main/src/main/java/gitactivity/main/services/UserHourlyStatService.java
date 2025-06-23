@@ -29,7 +29,7 @@ public class UserHourlyStatService {
     public void saveUserHourlyStat() {  // Метод для создания и заполнения новой ячейки в базе данных
         userHourlyStatRepository.clearTable();
 
-        Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(LocalDateTime.now().minusHours(14), LocalDateTime.now());
+        Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(LocalDateTime.now().minusHours(1), LocalDateTime.now());
 
         Set<String> setKeys = commits.keySet();
         users.addAll(setKeys);
