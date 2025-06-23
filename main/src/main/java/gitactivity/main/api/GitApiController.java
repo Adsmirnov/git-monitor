@@ -1,5 +1,6 @@
 package gitactivity.main.api;
 
+import gitactivity.main.services.UserDailyStatService;
 import gitactivity.main.services.UserHourlyStatService;
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,13 @@ public class GitApiController {  // Класс создан для тестов 
     @Autowired
     private UserHourlyStatService userHourlyStatService;
 
+    @Autowired
+    private UserDailyStatService userDailyStatService;
+
     @GetMapping("/get/commits")
     public String getCommits() {
         userHourlyStatService.saveUserHourlyStat();
+        userDailyStatService.saveUserDailyStat();
         return "Success";
     }
 }
