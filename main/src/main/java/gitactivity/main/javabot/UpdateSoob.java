@@ -28,34 +28,46 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     @Autowired
     private UserService userService;
 
-    private boolean permission = false;
-
     public UpdateSoob() {
         this.telegramClient = new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
     }
+
+    private boolean checkWhitelist(String username) {
+        System.out.println("[CHECKING WHITELIST]");
+        System.out.println(username);
+        System.out.println("[WHITELIST]");
+        for(User user : userService.getUsers()) {
+            System.out.println(user);
+            if (user.getLogin().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void consume(Update update) {
         if(update.hasCallbackQuery()){
+            // проверка на вайтлист
+            String username = update.getCallbackQuery().getFrom().getUserName();
+            if (!checkWhitelist(username)) {
+                return;
+            }
+
             Vozvrat(update.getCallbackQuery());
         }
         if(update.hasMessage()){
             String massegtext=update.getMessage().getText();
             Long getchatid = update.getMessage().getChatId();
 
-            String userName = update.getMessage().getFrom().getUserName();
-            System.out.println(userName);
-            System.out.println("[WHITELIST]");
-            for(User user : userService.getUsers()) {
-                System.out.println(user);
-                if (user.getLogin().equals(userName)) {
-                    permission = true;
-                }
+            // проверка на вайтлист
+            String username = update.getMessage().getFrom().getUserName();
+            if (!checkWhitelist(username)) {
+                return;
             }
+
             if(massegtext.equals("/start")){
-                if(permission) {
-                    sendMainMenu(getchatid);
-                    permission = false;
-                }
+                sendMainMenu(getchatid);
             }else{
                 SendMessage message = SendMessage.builder().text("Гойда").chatId(getchatid).build();
                 try {
