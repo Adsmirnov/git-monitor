@@ -1,5 +1,8 @@
 package gitactivity.main.javabot;
 
+import gitactivity.main.model.User;
+import gitactivity.main.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
@@ -22,6 +25,11 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
 
     private Map<String, String> env = System.getenv();
 
+    @Autowired
+    private UserService userService;
+
+    private boolean permission = false;
+
     public UpdateSoob() {
         this.telegramClient = new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
     }
@@ -33,8 +41,21 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         if(update.hasMessage()){
             String massegtext=update.getMessage().getText();
             Long getchatid = update.getMessage().getChatId();
+
+            String userName = update.getMessage().getFrom().getUserName();
+            System.out.println(userName);
+            System.out.println("[WHITELIST]");
+            for(User user : userService.getUsers()) {
+                System.out.println(user);
+                if (user.getLogin().equals(userName)) {
+                    permission = true;
+                }
+            }
             if(massegtext.equals("/start")){
-                sendMainMenu(getchatid);
+                if(permission) {
+                    sendMainMenu(getchatid);
+                    permission = false;
+                }
             }else{
                 SendMessage message = SendMessage.builder().text("Гойда").chatId(getchatid).build();
                 try {
