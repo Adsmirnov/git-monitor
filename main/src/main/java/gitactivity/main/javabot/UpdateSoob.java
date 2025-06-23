@@ -33,11 +33,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private boolean checkWhitelist(String username) {
-        System.out.println("[CHECKING WHITELIST]");
-        System.out.println(username);
-        System.out.println("[WHITELIST]");
         for(User user : userService.getUsers()) {
-            System.out.println(user);
             if (user.getLogin().equals(username)) {
                 return true;
             }
