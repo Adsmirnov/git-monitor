@@ -27,7 +27,6 @@ public class UserHourlyStatService {
         UserHourlyStat stat = new UserHourlyStat();
         ArrayList<Commit> commits = commitParserService.getParsedCommits(LocalDateTime.now().minusHours(5), LocalDateTime.now());
         int sumOfChangedLines = 0;
-        System.out.println(commits);
         for (Commit commit : commits) {
             sumOfChangedLines+=commit.getChangedLines();
         }

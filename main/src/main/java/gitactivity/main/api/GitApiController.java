@@ -27,8 +27,6 @@ public class GitApiController {  // Класс создан для тестов 
 
     @GetMapping("/get/commits")
     public String getCommits() {
-//        ArrayList<Pair<Integer, String>> data = gitApiService.getProcessedData();
-        commitParserService.getParsedCommits(LocalDateTime.now().minusHours(2),LocalDateTime.now());
         userHourlyStatService.saveUserHourlyStat();
         return "Success";
     }
