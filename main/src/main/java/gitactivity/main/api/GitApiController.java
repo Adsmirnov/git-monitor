@@ -21,9 +21,9 @@ public class GitApiController {  // Класс создан для тестов 
     private CommitParserService commitParserService;
 
     @GetMapping("/get/commits")
-    public ArrayList<Pair<Integer, String>> getCommits() {
-        ArrayList<Pair<Integer, String>> data = gitApiService.getProcessedData();
+    public String getCommits() {
+//        ArrayList<Pair<Integer, String>> data = gitApiService.getProcessedData();
         commitParserService.getParsedCommits();
-        return data;
+        return "Success";
     }
 }

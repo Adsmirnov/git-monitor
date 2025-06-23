@@ -39,6 +39,9 @@ public class CommitParserService {
                 commit.setUser((String) currentCommit.get("committer_name"));
                 commit.setComment((String) currentCommit.get("message"));
 
+                // количество изменённых линий
+                commit.setChangedLines(gitApiService.getChangedLines(repoId, (String) currentCommit.get("id")));
+
                 // работа с датой
                 String dateTime = (String) currentCommit.get("committed_date");
                 dateTime = dateTime.substring(0, 19);

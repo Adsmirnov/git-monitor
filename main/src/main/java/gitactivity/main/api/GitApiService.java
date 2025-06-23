@@ -85,6 +85,40 @@ public class GitApiService {
         return repoCommits;
     }
 
+    public Integer getChangedLines(Integer repoId, String id) {
+        HttpUrl repoUrl = new HttpUrl.Builder()
+                .scheme("https")
+                .host("gitlab.com")
+                .addPathSegment("api")
+                .addPathSegment("v4")
+                .addPathSegment("projects")
+                .addPathSegment(repoId.toString())
+                .addPathSegment("repository")
+                .addPathSegment("commits")
+                .addPathSegment(id)
+                .addQueryParameter("stats", "true")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(repoUrl)
+                .addHeader("PRIVATE-TOKEN", env.get("GIT_API_KEY"))
+                .build();
+
+        Integer changedLines = 0;
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Запрос к серверу не был успешен: " +
+                        response.code() + " " + response.message() + env.get("GIT_API_KEY"));
+            }
+            JSONObject fullStats = new JSONObject(response.peekBody(Long.MAX_VALUE).string());
+            JSONObject stats = (JSONObject) fullStats.get("stats");
+            changedLines = (Integer) stats.get("total");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return changedLines;
+    }
+
     public ArrayList<Pair<Integer, String>> getProcessedData() {  // Общий публичный метод для получения всех коммитов группы
         String rawApiData = gitApiRepository.getGitData();
 
