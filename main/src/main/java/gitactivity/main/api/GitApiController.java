@@ -17,12 +17,6 @@ import java.util.ArrayList;
 public class GitApiController {  // Класс создан для тестов программы, в конечном результате будет убран
 
     @Autowired
-    private GitApiService gitApiService;
-
-    @Autowired
-    private CommitParserService commitParserService;
-
-    @Autowired
     private UserHourlyStatService userHourlyStatService;
 
     @GetMapping("/get/commits")

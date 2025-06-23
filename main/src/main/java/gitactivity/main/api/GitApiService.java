@@ -27,7 +27,6 @@ public class GitApiService {
 
     private ArrayList<Integer> getRepoIds(String rawApiData) {  // Метод для получения списка айди всех репозиториев данной группы
         JSONObject group = new JSONObject(rawApiData);
-//        System.out.println(group);
 
         ArrayList<Integer> repoIds = new ArrayList<>();
 
@@ -43,7 +42,6 @@ public class GitApiService {
             System.out.println("[REPO] " + currentRepoId);
         }
 
-//        System.out.println(repoIds);
         return repoIds;
     }
 
@@ -125,7 +123,6 @@ public class GitApiService {
         ArrayList<Integer> repoIds = getRepoIds(rawApiData);
 
         ArrayList<Pair<Integer, String>> allCommits = getCommitsFromRepos(repoIds, since.minusHours(3), until.minusHours(3));
-//        System.out.println("[LOG] All commits: " + allCommits);
 
         return allCommits;
     }
