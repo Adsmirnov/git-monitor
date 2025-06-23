@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,29 +24,37 @@ public class UserHourlyStatService {
     @Autowired
     private CommitParserService commitParserService;
 
+    private ArrayList<String> users = new ArrayList<>();
+
     public void saveUserHourlyStat() {  // Метод для создания и заполнения новой ячейки в базе данных
         userHourlyStatRepository.clearTable();
-        UserHourlyStat stat = new UserHourlyStat();
-        Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(LocalDateTime.now().minusHours(5), LocalDateTime.now());
 
-        ArrayList<Commit> commitsOfUser = commits.get("mileZ239");
-        if (commitsOfUser == null) {
-            return;
+        Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(LocalDateTime.now().minusHours(14), LocalDateTime.now());
+
+        Set<String> setKeys = commits.keySet();
+        users.addAll(setKeys);
+        System.out.println(setKeys);
+
+        for (String user : users) {
+            UserHourlyStat stat = new UserHourlyStat();
+            ArrayList<Commit> commitsOfUser = commits.get(user);
+
+            if (commitsOfUser == null) {
+                return;
+            }
+
+            int sumOfChangedLines = 0;
+            for (Commit c : commitsOfUser) {
+                sumOfChangedLines += c.getChangedLines();
+            }
+
+            stat.setLogin(user);
+            stat.setCommits(commitsOfUser.size());
+            stat.setLines(sumOfChangedLines);
+            stat.setDate(LocalDateTime.now());
+
+            userHourlyStatRepository.save(stat);
         }
-
-        int sumOfChangedLines = 0;
-        for (Commit c : commitsOfUser) {
-            sumOfChangedLines += c.getChangedLines();
-        }
-
-
-        stat.setLogin("mileZ239");
-        stat.setCommits(commitsOfUser.size());
-        stat.setLines(sumOfChangedLines);
-        stat.setDate(LocalDateTime.now());
-
-        userHourlyStatRepository.save(stat);
-
     }
 
     public List<UserHourlyStat> getUserHourlyStat(String login, LocalDateTime date) {  // Метод для получения статистики данного пользователя за данный час данного дня
