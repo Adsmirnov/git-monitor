@@ -14,13 +14,16 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
 
+    private Map<String, String> env = System.getenv();
+
     public UpdateSoob() {
-        this.telegramClient = new OkHttpTelegramClient("7782840064:AAHCj2E3t1fy-drqh-d72iYu__EBTI2B8Gc");
+        this.telegramClient = new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
     }
     @Override
     public void consume(Update update) {
