@@ -53,7 +53,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             Vozvrat(update.getCallbackQuery());
         }
         if(update.hasMessage()){
-            String massegtext=update.getMessage().getText();
+            String messagetext=update.getMessage().getText();
             Long getchatid = update.getMessage().getChatId();
 
             // проверка на вайтлист
@@ -62,7 +62,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
                 return;
             }
 
-            if(massegtext.equals("/start")){
+            if(messagetext.equals("/start")){
                 sendMainMenu(getchatid);
             }else{
                 SendMessage message = SendMessage.builder().text("Гойда").chatId(getchatid).build();
@@ -82,11 +82,13 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             case "name" -> sendSpisok(chatId);
             case "day" -> sendDay(chatId);
             case "month" -> sendMonth(chatId);
-            default -> {if (data.startsWith("name_")){
-                namegraff(chatId, data);
-            }else{
-                sendText(chatId, "Не понял гойду");
-            } }
+            default -> {
+                if (data.startsWith("name_")){
+                    namegraff(chatId, data);
+                } else {
+                    sendText(chatId, "Не понял гойду");
+                }
+            }
         }
     }
 
@@ -100,8 +102,8 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
 
-    private void sendText(Long chatId, String massegtext) {
-        SendMessage message = SendMessage.builder().text(massegtext).chatId(chatId).build();
+    private void sendText(Long chatId, String messagetext) {
+        SendMessage message = SendMessage.builder().text(messagetext).chatId(chatId).build();
         try {
             telegramClient.execute(message);
         } catch (TelegramApiException e) {
@@ -138,7 +140,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    private void  sendMainMenu(Long getchatid){
+    private void sendMainMenu(Long getchatid){
         SendMessage message = SendMessage.builder().text("Выбери гойду").chatId(getchatid).build();
         var button1 = InlineKeyboardButton.builder().text("Статистика за день").callbackData("day").build();
         var button2 = InlineKeyboardButton.builder().text("Статистика за месяц").callbackData("month").build();
