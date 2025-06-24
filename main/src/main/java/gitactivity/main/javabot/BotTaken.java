@@ -1,11 +1,10 @@
 package gitactivity.main.javabot;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
-
-import java.util.Map;
 
 @Component
 public class BotTaken implements SpringLongPollingBot {
@@ -17,11 +16,12 @@ public class BotTaken implements SpringLongPollingBot {
         this.updateSoob = updateSoob;
     }
 
-    private Map<String, String> env = System.getenv();
+    @Autowired
+    private Environment environment;
 
     @Override
     public String getBotToken() {
-        return env.get("TG_BOT_TOKEN");
+        return environment.getProperty("gitmonitor.bottoken");
     }
 
     @Override
