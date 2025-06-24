@@ -1,6 +1,7 @@
 package gitactivity.main.javabot;
 
 import gitactivity.main.api.GitApiService;
+import gitactivity.main.charts.PictureManager;
 import gitactivity.main.model.User;
 import gitactivity.main.model.UserDailyStat;
 import gitactivity.main.services.UserDailyStatService;
@@ -21,6 +22,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,6 +43,9 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
 
     @Autowired
     private GitApiService gitApiService;
+
+    @Autowired
+    private PictureManager pictureManager;
 
     public UpdateSoob() {
         this.telegramClient = new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
@@ -76,7 +81,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             setGroupLink(username);
             try {
                 Vozvrat(update.getCallbackQuery());
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -103,7 +108,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    private void Vozvrat(CallbackQuery callbackQuery) throws IOException {
+    private void Vozvrat(CallbackQuery callbackQuery) throws IOException, InterruptedException {
         var data = callbackQuery.getData();
         var chatId = callbackQuery.getFrom().getId();
         switch (data){
@@ -120,11 +125,13 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    private void namegraff(Long chatId, String data) throws IOException {
+    private void namegraff(Long chatId, String data) throws IOException, InterruptedException {
         SendMessage message = SendMessage.builder().text(userDailyStatService.getUserDailyStat(data.substring(5)).toString()).chatId(chatId).build();
-        ClassPathResource resource = new ClassPathResource("static/Doc/imegen/Pudg.png");
+        pictureManager.mainMethod();
+        Thread.sleep(3000);
+        ClassPathResource resource = new ClassPathResource("static/goida.png");
         InputStream inputStream = resource.getInputStream();
-        InputFile inputFile = new InputFile(inputStream, "Pudg.png");
+        InputFile inputFile = new InputFile(inputStream, "goida.png");
         SendPhoto sendPhoto = SendPhoto.builder()
                 .chatId(chatId)
                 .photo(inputFile)
@@ -139,6 +146,8 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+
+        pictureManager.deletePicture("goida.png");
     }
 
 

@@ -1,7 +1,6 @@
 package gitactivity.main.charts;
 
 
-import gitactivity.main.model.User;
 import gitactivity.main.model.UserDailyStat;
 import gitactivity.main.services.UserDailyStatService;
 import org.jfree.chart.ChartFactory;
@@ -18,12 +17,14 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 
 import java.io.IOException;
 import java.util.List;
 
+@Service
 public class PictureManager {
 
     @Autowired
@@ -90,22 +91,22 @@ public class PictureManager {
         );
         return chart;
     }
-    public void createLinePicture(List<UserDailyStat> stats, String name, String userName)throws IOException {
+    public void createLinePicture(List<UserDailyStat> stats, String name, String userName) throws IOException, InterruptedException {
         XYDataset dataset = createLineDataset(stats);
-
+        String resourcesPath = "main/src/main/resources/static/";
         JFreeChart chart = createLineChart(dataset, userName);
-        ChartUtils.saveChartAsPNG(new File(name), chart, 450, 400);
+        ChartUtils.saveChartAsPNG(new File(resourcesPath + name), chart, 450, 400);
     }
 
 
 
 
-    public void delitePicture(String name)throws IOException {
+    public void deletePicture(String name)throws IOException {
         File file = new File(name);
         file.delete();
     }
 
-    public void mainMethod() throws IOException {
+    public void mainMethod() throws IOException, InterruptedException {
         PictureManager Picture = new PictureManager();
         int[] comits = {11, 46, 28, 33, 22, 13};
         String[] users = {"User 1", "User 2", "User 3", "User 4", "User 5", "User 6"};
