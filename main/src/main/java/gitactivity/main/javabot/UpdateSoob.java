@@ -6,11 +6,14 @@ import gitactivity.main.model.UserDailyStat;
 import gitactivity.main.services.UserDailyStatService;
 import gitactivity.main.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -18,6 +21,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +74,11 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
                 return;
             }
             setGroupLink(username);
-            Vozvrat(update.getCallbackQuery());
+            try {
+                Vozvrat(update.getCallbackQuery());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         if(update.hasMessage()){
             String messagetext=update.getMessage().getText();
@@ -94,7 +103,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    private void Vozvrat(CallbackQuery callbackQuery) {
+    private void Vozvrat(CallbackQuery callbackQuery) throws IOException {
         var data = callbackQuery.getData();
         var chatId = callbackQuery.getFrom().getId();
         switch (data){
@@ -111,8 +120,20 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    private void namegraff(Long chatId, String data) {
+    private void namegraff(Long chatId, String data) throws IOException {
         SendMessage message = SendMessage.builder().text(userDailyStatService.getUserDailyStat(data.substring(5)).toString()).chatId(chatId).build();
+        ClassPathResource resource = new ClassPathResource("static/Doc/imegen/Pudg.png");
+        InputStream inputStream = resource.getInputStream();
+        InputFile inputFile = new InputFile(inputStream, "Pudg.png");
+        SendPhoto sendPhoto = SendPhoto.builder()
+                .chatId(chatId)
+                .photo(inputFile)
+                .build();
+        try {
+            telegramClient.execute(sendPhoto);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
         try {
             telegramClient.execute(message);
         } catch (TelegramApiException e) {
