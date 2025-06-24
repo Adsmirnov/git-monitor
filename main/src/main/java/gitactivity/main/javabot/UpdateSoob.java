@@ -1,5 +1,6 @@
 package gitactivity.main.javabot;
 
+import gitactivity.main.api.GitApiService;
 import gitactivity.main.model.User;
 import gitactivity.main.model.UserDailyStat;
 import gitactivity.main.services.UserDailyStatService;
@@ -33,6 +34,9 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     @Autowired
     private UserDailyStatService userDailyStatService;
 
+    @Autowired
+    private GitApiService gitApiService;
+
     public UpdateSoob() {
         this.telegramClient = new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
     }
@@ -45,6 +49,16 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         }
         return false;
     }
+    private void setGroupLink(String username) {
+        if (!checkWhitelist(username)) {
+            return;
+        }
+        for(User user : userService.getUsers()) {
+            if (user.getLogin().equals(username)) {
+                gitApiService.setGroupLink(user.getGroup());
+            }
+        }
+    }
 
     @Override
     public void consume(Update update) {
@@ -54,7 +68,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             if (!checkWhitelist(username)) {
                 return;
             }
-
+            setGroupLink(username);
             Vozvrat(update.getCallbackQuery());
         }
         if(update.hasMessage()){
@@ -66,7 +80,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             if (!checkWhitelist(username)) {
                 return;
             }
-
+            setGroupLink(username);
             if(messagetext.equals("/start")){
                 sendMainMenu(getchatid);
             }else{

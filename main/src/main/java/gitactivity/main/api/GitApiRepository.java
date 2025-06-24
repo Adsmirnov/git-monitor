@@ -11,10 +11,14 @@ import java.util.Map;
 @Repository
 public class GitApiRepository {
 
-    private final String groupLink = "https://gitlab.com/api/v4/groups/109642057";
+    private String groupLink = "";
     private final OkHttpClient client = new OkHttpClient();
 
     Map<String, String> env = System.getenv();
+
+    public void setGroup(String link){
+        this.groupLink = link;
+    }
 
     public String getGitData() {  // Метод для создания запроса в GitLab API
 

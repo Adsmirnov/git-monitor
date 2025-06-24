@@ -16,4 +16,7 @@ public class User {
     @Column(name = "login")
     private String login;
 
+    @Column(name = "group")
+    private String group;
+
 }

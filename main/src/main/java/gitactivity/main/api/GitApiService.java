@@ -127,4 +127,8 @@ public class GitApiService {
         return allCommits;
     }
 
+    public void setGroupLink(String link) {
+        gitApiRepository.setGroup(link);
+    }
+
 }
