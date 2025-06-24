@@ -3,10 +3,11 @@ package gitactivity.main.api;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Repository
 public class GitApiRepository {
@@ -14,7 +15,8 @@ public class GitApiRepository {
     private String groupLink = "";
     private final OkHttpClient client = new OkHttpClient();
 
-    Map<String, String> env = System.getenv();
+    @Autowired
+    private Environment environment;
 
     public void setGroup(String link){
         this.groupLink = link;
@@ -24,13 +26,13 @@ public class GitApiRepository {
 
         Request request = new Request.Builder()
                 .url(groupLink)
-                .addHeader("PRIVATE-TOKEN", env.get("GIT_API_KEY"))
+                .addHeader("PRIVATE-TOKEN", environment.getProperty("gitmonitor.gitapikey"))
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Запрос к серверу не был успешен: " +
-                        response.code() + " " + response.message() + env.get("GIT_API_KEY"));
+                        response.code() + " " + response.message() + environment.getProperty("gitmonitor.gitapikey"));
             }
             return response.peekBody(Long.MAX_VALUE).string();
         } catch (IOException e) {

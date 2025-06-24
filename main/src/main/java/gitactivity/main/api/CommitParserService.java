@@ -25,7 +25,6 @@ public class CommitParserService {
         parsedCommits.clear();
         ArrayList<Pair<Integer, String>> allCommits = gitApiService.getProcessedData(since, until);
 
-        System.out.println("[COMMITS]");
         for (int i = 0; i < allCommits.size(); i++) {
             Integer repoId = allCommits.get(i).getValue0();
             String allCommit = allCommits.get(i).getValue1();
@@ -61,7 +60,6 @@ public class CommitParserService {
                     commits.add(commit);
                     parsedCommits.put(commit.getUser(), commits);
                 }
-                System.out.println("[COMMIT] " + commit);
             }
         }
 

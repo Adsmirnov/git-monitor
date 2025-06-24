@@ -50,7 +50,6 @@ public class UserDailyStatService {
 
         Set<String> setKeys = commits.keySet();
         users.addAll(setKeys);
-        System.out.println(setKeys);
 
         for (String user : users) {
             UserDailyStat stat = new UserDailyStat();

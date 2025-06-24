@@ -8,19 +8,20 @@ import org.javatuples.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Map;
 
 @Service
 public class GitApiService {
 
     private final OkHttpClient client = new OkHttpClient();
 
-    Map<String, String> env = System.getenv();
+    @Autowired
+    private Environment environment;
 
     @Autowired
     GitApiRepository gitApiRepository;
@@ -32,14 +33,12 @@ public class GitApiService {
 
         JSONArray projects = new JSONArray(group.get("projects").toString());
 
-        System.out.println("[REPOS]");
         for (int i = 0; i < projects.length(); i++) {
             JSONObject currentRepo = (JSONObject) projects.get(i);
 
             Integer currentRepoId = (Integer) currentRepo.get("id");
 
             repoIds.add(currentRepoId);
-            System.out.println("[REPO] " + currentRepoId);
         }
 
         return repoIds;
@@ -67,13 +66,13 @@ public class GitApiService {
 
             Request request = new Request.Builder()
                     .url(repoUrl)
-                    .addHeader("PRIVATE-TOKEN", env.get("GIT_API_KEY"))
+                    .addHeader("PRIVATE-TOKEN", environment.getProperty("gitmonitor.gitapikey"))
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
                     throw new IOException("Запрос к серверу не был успешен: " +
-                            response.code() + " " + response.message() + env.get("GIT_API_KEY"));
+                            response.code() + " " + response.message() + environment.getProperty("gitmonitor.gitapikey"));
                 }
                 repoCommits.add(new Pair<Integer, String>(repoId, response.peekBody(Long.MAX_VALUE).string()));
             } catch (IOException e) {
@@ -99,14 +98,14 @@ public class GitApiService {
 
         Request request = new Request.Builder()
                 .url(repoUrl)
-                .addHeader("PRIVATE-TOKEN", env.get("GIT_API_KEY"))
+                .addHeader("PRIVATE-TOKEN", environment.getProperty("gitmonitor.gitapikey"))
                 .build();
 
         Integer changedLines = 0;
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Запрос к серверу не был успешен: " +
-                        response.code() + " " + response.message() + env.get("GIT_API_KEY"));
+                        response.code() + " " + response.message() + environment.getProperty("gitmonitor.gitapikey"));
             }
             JSONObject fullStats = new JSONObject(response.peekBody(Long.MAX_VALUE).string());
             JSONObject stats = (JSONObject) fullStats.get("stats");

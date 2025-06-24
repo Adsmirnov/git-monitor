@@ -33,7 +33,6 @@ public class UserHourlyStatService {
 
         Set<String> setKeys = commits.keySet();
         users.addAll(setKeys);
-        System.out.println(setKeys);
 
         for (String user : users) {
             UserHourlyStat stat = new UserHourlyStat();
