@@ -132,7 +132,6 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     private void namegraff(Long chatId, String data) throws IOException, InterruptedException {
         SendMessage message = SendMessage.builder().text(userHourlyStatService.getUserHourlyStats(data.substring(5)).toString()).chatId(chatId).build();
         pictureManager.mainMethod(data.substring(5));
-        Thread.sleep(40000);
         ClassPathResource resource = new ClassPathResource("static/goida.png");
         InputStream inputStream = resource.getInputStream();
         InputFile inputFile = new InputFile(inputStream, "goida.png");

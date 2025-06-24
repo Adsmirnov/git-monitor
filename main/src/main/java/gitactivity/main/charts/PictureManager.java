@@ -98,7 +98,7 @@ public class PictureManager {
     }
     public void createLinePicture(List<UserHourlyStat> stats, String name, String userName) throws IOException, InterruptedException {
         XYDataset dataset = createLineDataset(stats);
-        String resourcesPath = "main/src/main/resources/static/";
+        String resourcesPath = "main/target/classes/static/";
         JFreeChart chart = createLineChart(dataset, userName);
         ChartUtils.saveChartAsPNG(new File(resourcesPath + name), chart, 450, 400);
     }
