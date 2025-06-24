@@ -108,11 +108,7 @@ public class PictureManager {
 
     public void mainMethod() throws IOException, InterruptedException {
         PictureManager Picture = new PictureManager();
-        int[] comits = {11, 46, 28, 33, 22, 13};
-        String[] users = {"User 1", "User 2", "User 3", "User 4", "User 5", "User 6"};
         String name = "goida.png";
-        int[] comitsUser = {4, 6, 2, 7, 2, 7, 10, 6, 11};
-        int[] lines = {43, 56, 77, 44, 73, 471, 56, 575, 43};
         Picture.createLinePicture(userDailyStatService.getStats(), name, "user 1");
     }
 }

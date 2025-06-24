@@ -147,7 +147,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             throw new RuntimeException(e);
         }
 
-        pictureManager.deletePicture("goida.png");
+        pictureManager.deletePicture("main/src/main/resources/static/goida.png");
     }
 
 
