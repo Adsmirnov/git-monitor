@@ -5,6 +5,7 @@ import gitactivity.main.charts.PictureManager;
 import gitactivity.main.model.User;
 import gitactivity.main.model.UserDailyStat;
 import gitactivity.main.services.UserDailyStatService;
+import gitactivity.main.services.UserHourlyStatService;
 import gitactivity.main.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -46,6 +47,9 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
 
     @Autowired
     private PictureManager pictureManager;
+
+    @Autowired
+    private UserHourlyStatService userHourlyStatService;
 
     public UpdateSoob() {
         this.telegramClient = new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
@@ -126,9 +130,9 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void namegraff(Long chatId, String data) throws IOException, InterruptedException {
-        SendMessage message = SendMessage.builder().text(userDailyStatService.getUserDailyStat(data.substring(5)).toString()).chatId(chatId).build();
-        pictureManager.mainMethod();
-        Thread.sleep(3000);
+        SendMessage message = SendMessage.builder().text(userHourlyStatService.getUserHourlyStats(data.substring(5)).toString()).chatId(chatId).build();
+        pictureManager.mainMethod(data.substring(5));
+        Thread.sleep(40000);
         ClassPathResource resource = new ClassPathResource("static/goida.png");
         InputStream inputStream = resource.getInputStream();
         InputFile inputFile = new InputFile(inputStream, "goida.png");

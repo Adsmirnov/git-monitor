@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface UserDailyStatRepository extends JpaRepository<UserDailyStat, Long> {
     @Query("FROM UserDailyStat s WHERE s.login=:login")
-    List<UserDailyStat> findByLogin(@Param("login") String login);
+    UserDailyStat findByLogin(@Param("login") String login);
 
 //    @Query("FROM UserDailyStat s WHERE s.login = :login AND DATE(s.date) = DATE(:date)")
 //    List<UserDailyStat> findByLoginAndDate(@Param("login") String login, @Param("date") LocalDateTime date);

@@ -2,7 +2,9 @@ package gitactivity.main.charts;
 
 
 import gitactivity.main.model.UserDailyStat;
+import gitactivity.main.model.UserHourlyStat;
 import gitactivity.main.services.UserDailyStatService;
+import gitactivity.main.services.UserHourlyStatService;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -30,10 +32,13 @@ public class PictureManager {
     @Autowired
     private UserDailyStatService userDailyStatService;
 
-    private static CategoryDataset createBarDataset(List<UserDailyStat> stats) {
+    @Autowired
+    private UserHourlyStatService userHourlyStatService;
+
+    private static CategoryDataset createBarDataset(List<UserHourlyStat> stats) {
 
         var dataset = new DefaultCategoryDataset();
-        for(UserDailyStat stat : stats){
+        for(UserHourlyStat stat : stats){
             dataset.setValue(stat.getCommits(), "Commits", stat.getLogin());
         }
         return dataset;
@@ -49,7 +54,7 @@ public class PictureManager {
                 false, true, false);
         return barChart;
     }
-    public void createBarPicture(List<UserDailyStat> stats, String name)throws IOException {
+    public void createBarPicture(List<UserHourlyStat> stats, String name)throws IOException {
         CategoryDataset dataset = createBarDataset(stats);
 
         JFreeChart chart = createBarChart(dataset);
@@ -59,7 +64,7 @@ public class PictureManager {
 
 
 
-    private static XYDataset createLineDataset(List<UserDailyStat> stats) {
+    private static XYDataset createLineDataset(List<UserHourlyStat> stats) {
 
         var series1 = new XYSeries("Commits");
         for(int i = 0; i < stats.size(); i++){
@@ -91,7 +96,7 @@ public class PictureManager {
         );
         return chart;
     }
-    public void createLinePicture(List<UserDailyStat> stats, String name, String userName) throws IOException, InterruptedException {
+    public void createLinePicture(List<UserHourlyStat> stats, String name, String userName) throws IOException, InterruptedException {
         XYDataset dataset = createLineDataset(stats);
         String resourcesPath = "main/src/main/resources/static/";
         JFreeChart chart = createLineChart(dataset, userName);
@@ -106,9 +111,9 @@ public class PictureManager {
         file.delete();
     }
 
-    public void mainMethod() throws IOException, InterruptedException {
+    public void mainMethod(String login) throws IOException, InterruptedException {
         PictureManager Picture = new PictureManager();
         String name = "goida.png";
-        Picture.createLinePicture(userDailyStatService.getStats(), name, "user 1");
+        Picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
     }
 }

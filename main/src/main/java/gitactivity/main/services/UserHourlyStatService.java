@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,44 @@ public class UserHourlyStatService {
         }
     }
 
-    public List<UserHourlyStat> getUserHourlyStat(String login, LocalDateTime date) {  // Метод для получения статистики данного пользователя за данный час данного дня
-        return userHourlyStatRepository.findByLoginAndDateAndHour(login, date, date.getHour());
+//    public List<UserHourlyStat> getUserHourlyStat(String login, LocalDateTime date) {  // Метод для получения статистики данного пользователя за данный час данного дня
+//        return userHourlyStatRepository.findByLoginAndDateAndHour(login, date, date.getHour());
+//    }
+
+    public ArrayList<UserHourlyStat> getUserHourlyStats(String login) {
+        ArrayList<UserHourlyStat> list = new ArrayList<>();
+
+        LocalDateTime since = LocalDate.now().atTime(LocalTime.of(9,0));
+
+        while(since.isBefore(LocalDateTime.now())) {
+            Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since, since.plusHours(1));
+            since = since.plusHours(1);
+            ArrayList<Commit> commitsOfUserByHour = commits.get(login);
+            UserHourlyStat stat = new UserHourlyStat();
+            if (commitsOfUserByHour == null) {
+                stat.setCommits(0);
+                stat.setDate(since);
+                stat.setLines(0);
+                stat.setLogin(login);
+                continue;
+            }
+            else {
+                int sumOfChangedLines = 0;
+                for (Commit c : commitsOfUserByHour) {
+                    sumOfChangedLines += c.getChangedLines();
+                }
+
+                stat.setLogin(login);
+                stat.setDate(since.plusHours(1));
+                stat.setLines(sumOfChangedLines);
+                stat.setCommits(commitsOfUserByHour.size());
+            }
+
+
+
+            list.add(stat);
+        }
+
+        return list;
     }
 }

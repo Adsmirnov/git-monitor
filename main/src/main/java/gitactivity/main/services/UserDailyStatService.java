@@ -36,7 +36,7 @@ public class UserDailyStatService {
         return userDailyStatRepository.save(stat);
     }
 
-    public List<UserDailyStat> getUserDailyStat(String login) {  // Метод для получения статистики данного пользователя за день
+    public UserDailyStat getUserDailyStat(String login) {  // Метод для получения статистики данного пользователя за день
         return userDailyStatRepository.findByLogin(login);
     }
 
