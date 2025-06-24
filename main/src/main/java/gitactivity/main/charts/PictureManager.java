@@ -1,6 +1,9 @@
 package gitactivity.main.charts;
 
 
+import gitactivity.main.model.User;
+import gitactivity.main.model.UserDailyStat;
+import gitactivity.main.services.UserDailyStatService;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -14,17 +17,23 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 
 import java.io.IOException;
+import java.util.List;
 
 public class PictureManager {
-    private static CategoryDataset createBarDataset(int[] comits, String[] users) {
+
+    @Autowired
+    private UserDailyStatService userDailyStatService;
+
+    private static CategoryDataset createBarDataset(List<UserDailyStat> stats) {
 
         var dataset = new DefaultCategoryDataset();
-        for(int i = 0; i < comits.length; i++){
-            dataset.setValue(comits[i], "Commits", users[i]);
+        for(UserDailyStat stat : stats){
+            dataset.setValue(stat.getCommits(), "Commits", stat.getLogin());
         }
         return dataset;
     }
@@ -39,8 +48,8 @@ public class PictureManager {
                 false, true, false);
         return barChart;
     }
-    public void createBarPicture(int[] comits, String[] users, String name)throws IOException {
-        CategoryDataset dataset = createBarDataset(comits, users);
+    public void createBarPicture(List<UserDailyStat> stats, String name)throws IOException {
+        CategoryDataset dataset = createBarDataset(stats);
 
         JFreeChart chart = createBarChart(dataset);
         ChartUtils.saveChartAsPNG(new File(name), chart, 450, 400);
@@ -49,16 +58,16 @@ public class PictureManager {
 
 
 
-    private static XYDataset createLineDataset(int[] comits, int[] Lines) {
+    private static XYDataset createLineDataset(List<UserDailyStat> stats) {
 
         var series1 = new XYSeries("Commits");
-        for(int i = 0; i < comits.length; i++){
-            series1.add(i+9, comits[i]);
+        for(int i = 0; i < stats.size(); i++){
+            series1.add(i+9, stats.get(i).getCommits());
         }
 
         var series2 = new XYSeries("Lines");
-        for(int i = 0; i < Lines.length; i++){
-            series2.add(i+9, Lines[i]);
+        for(int i = 0; i < stats.size(); i++){
+            series2.add(i+9, stats.get(i).getLines());
         }
 
         var dataset = new XYSeriesCollection();
@@ -81,8 +90,8 @@ public class PictureManager {
         );
         return chart;
     }
-    public void createLinePicture(int[] comits, int[] Lines, String name, String userName)throws IOException {
-        XYDataset dataset = createLineDataset(comits, Lines);
+    public void createLinePicture(List<UserDailyStat> stats, String name, String userName)throws IOException {
+        XYDataset dataset = createLineDataset(stats);
 
         JFreeChart chart = createLineChart(dataset, userName);
         ChartUtils.saveChartAsPNG(new File(name), chart, 450, 400);
@@ -97,13 +106,12 @@ public class PictureManager {
     }
 
     public void mainMethod() throws IOException {
-
         PictureManager Picture = new PictureManager();
         int[] comits = {11, 46, 28, 33, 22, 13};
         String[] users = {"User 1", "User 2", "User 3", "User 4", "User 5", "User 6"};
         String name = "goida.png";
         int[] comitsUser = {4, 6, 2, 7, 2, 7, 10, 6, 11};
         int[] lines = {43, 56, 77, 44, 73, 471, 56, 575, 43};
-        Picture.createLinePicture(comitsUser, lines, name, "user 1");
+        Picture.createLinePicture(userDailyStatService.getStats(), name, "user 1");
     }
 }
