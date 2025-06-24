@@ -1,6 +1,8 @@
 package gitactivity.main.javabot;
 
 import gitactivity.main.model.User;
+import gitactivity.main.model.UserDailyStat;
+import gitactivity.main.services.UserDailyStatService;
 import gitactivity.main.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,9 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserDailyStatService userDailyStatService;
 
     public UpdateSoob() {
         this.telegramClient = new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
@@ -93,7 +98,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void namegraff(Long chatId, String data) {
-        SendMessage message = SendMessage.builder().text("Объект для гойдирования " + data.substring(5)).chatId(chatId).build();
+        SendMessage message = SendMessage.builder().text(userDailyStatService.getUserDailyStat(data.substring(5)).toString()).chatId(chatId).build();
         try {
             telegramClient.execute(message);
         } catch (TelegramApiException e) {
@@ -120,11 +125,16 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void sendSpisok(Long chatId) {
-        String [] names = new String[] {"Иван", "Игорь"};
+        userDailyStatService.saveUserDailyStat();
+        List<UserDailyStat> dailyStats = userDailyStatService.getStats();
+        ArrayList<String> names = new ArrayList<>();
+        for (UserDailyStat stat : dailyStats) {
+            names.add(stat.getLogin());
+        }
         nameButton(chatId,names);
     }
 
-    private void nameButton(Long chatId, String[] names) {
+    private void nameButton(Long chatId, ArrayList<String> names) {
         SendMessage message = SendMessage.builder().text("Выберите сотрудника").chatId(chatId).build();
         List<InlineKeyboardRow> buttons = new ArrayList<>();
         for (String name : names) {

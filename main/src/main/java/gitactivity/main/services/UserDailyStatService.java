@@ -36,8 +36,12 @@ public class UserDailyStatService {
         return userDailyStatRepository.save(stat);
     }
 
-    public List<UserDailyStat> getUserDailyStat(String login, LocalDateTime date) {  // Метод для получения статистики данного пользователя за день
-        return userDailyStatRepository.findByLoginAndDate(login, date);
+    public List<UserDailyStat> getUserDailyStat(String login) {  // Метод для получения статистики данного пользователя за день
+        return userDailyStatRepository.findByLogin(login);
+    }
+
+    public List<UserDailyStat> getStats(){
+        return userDailyStatRepository.findAll();
     }
 
     public void saveUserDailyStat() {

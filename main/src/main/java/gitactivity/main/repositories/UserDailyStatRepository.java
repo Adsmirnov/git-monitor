@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface UserDailyStatRepository extends JpaRepository<UserDailyStat, Long> {
-    List<UserDailyStat> findByLogin(String login);
+    @Query("FROM UserDailyStat s WHERE s.login=:login")
+    List<UserDailyStat> findByLogin(@Param("login") String login);
 
-    @Query("SELECT s FROM UserDailyStat s WHERE s.login = :login AND DATE(s.date) = DATE(:date)")
-    List<UserDailyStat> findByLoginAndDate(@Param("login") String login, @Param("date") LocalDateTime date);
+//    @Query("FROM UserDailyStat s WHERE s.login = :login AND DATE(s.date) = DATE(:date)")
+//    List<UserDailyStat> findByLoginAndDate(@Param("login") String login, @Param("date") LocalDateTime date);
 
     @Modifying
     @Transactional
