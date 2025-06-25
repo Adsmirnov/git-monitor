@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -63,12 +60,14 @@ public class UserHourlyStatService {
 //    }
 
     public UserHourlyStat[] getUserHourlyStats(String login) {
+        System.out.println("[LOG] Получаю статистику за час");
         UserHourlyStat[] list = new UserHourlyStat[10];
 
         LocalDateTime since = LocalDate.now().atTime(LocalTime.of(9, 0));
 
 
         for (int i = 0; i < list.length; i++) {
+            System.out.println("[LOG] Получаю статистику за " + (i + 9) + " час");
             Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since, since.plusHours(i));
             ArrayList<Commit> commitsOfUserByHour = commits.get(login);
             UserHourlyStat stat = new UserHourlyStat();
@@ -93,6 +92,9 @@ public class UserHourlyStatService {
                 list[i] = stat;
             }
         }
+
+        System.out.println("[LOG] Статистика получена");
+        System.out.println(Arrays.toString(list));
 
         return list;
     }

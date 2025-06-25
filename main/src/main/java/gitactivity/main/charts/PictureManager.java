@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,7 +36,7 @@ public class PictureManager {
     @Autowired
     private UserHourlyStatService userHourlyStatService;
 
-    private static CategoryDataset createBarDataset(List<UserHourlyStat> stats) {
+    private static CategoryDataset createBarDataset(UserHourlyStat[] stats) {
 
         var dataset = new DefaultCategoryDataset();
         for(UserHourlyStat stat : stats){
@@ -54,11 +55,13 @@ public class PictureManager {
                 false, true, false);
         return barChart;
     }
-    public void createBarPicture(List<UserHourlyStat> stats, String name)throws IOException {
-        CategoryDataset dataset = createBarDataset(stats);
+    public void createBarPicture(UserHourlyStat[] stats, String name)throws IOException {
+        System.out.println("[LOG] Строю график");
 
+        CategoryDataset dataset = createBarDataset(stats);
+        String resourcesPath = "main/target/classes/static/";
         JFreeChart chart = createBarChart(dataset);
-        ChartUtils.saveChartAsPNG(new File(name), chart, 450, 400);
+        ChartUtils.saveChartAsPNG(new File(resourcesPath + name), chart, 450, 400);
     }
 
 
@@ -114,6 +117,7 @@ public class PictureManager {
     public void mainMethod(String login) throws IOException, InterruptedException {
         PictureManager Picture = new PictureManager();
         String name = "goida.png";
-        Picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
+//        Picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
+        Picture.createBarPicture(userHourlyStatService.getUserHourlyStats(login), name);
     }
 }

@@ -130,7 +130,6 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void namegraff(Long chatId, String data) throws IOException, InterruptedException {
-        SendMessage message = SendMessage.builder().text(userHourlyStatService.getUserHourlyStats(data.substring(5)).toString()).chatId(chatId).build();
         pictureManager.mainMethod(data.substring(5));
         ClassPathResource resource = new ClassPathResource("static/goida.png");
         InputStream inputStream = resource.getInputStream();
@@ -141,11 +140,6 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
                 .build();
         try {
             telegramClient.execute(sendPhoto);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            telegramClient.execute(message);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
