@@ -36,10 +36,10 @@ public class PictureManager {
     @Autowired
     private UserHourlyStatService userHourlyStatService;
 
-    private static CategoryDataset createBarDataset(UserHourlyStat[] stats) {
+    private static CategoryDataset createBarDataset(List<UserDailyStat> stats) {
 
         var dataset = new DefaultCategoryDataset();
-        for(UserHourlyStat stat : stats){
+        for(UserDailyStat stat : stats){
             dataset.setValue(stat.getCommits(), "Commits", stat.getLogin());
         }
         return dataset;
@@ -55,7 +55,7 @@ public class PictureManager {
                 false, true, false);
         return barChart;
     }
-    public void createBarPicture(UserHourlyStat[] stats, String name)throws IOException {
+    public void createBarPicture(List<UserDailyStat> stats, String name)throws IOException {
         System.out.println("[LOG] Строю график");
 
         CategoryDataset dataset = createBarDataset(stats);
@@ -114,10 +114,16 @@ public class PictureManager {
         file.delete();
     }
 
-    public void mainMethod(String login) throws IOException, InterruptedException {
+    public void drawUserHourlyStats(String login) throws IOException, InterruptedException {
         PictureManager Picture = new PictureManager();
         String name = "goida.png";
         Picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
 //        Picture.createBarPicture(userHourlyStatService.getUserHourlyStats(login), name);
+    }
+
+    public void drawDailyStats() throws IOException {
+        PictureManager Picture = new PictureManager();
+        String name = "goida.png";
+        Picture.createBarPicture(userDailyStatService.getStats(), name);
     }
 }
