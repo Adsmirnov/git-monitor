@@ -75,8 +75,10 @@ public class UserHourlyStatService {
 
             Pair<String, LocalDateTime> currentUser = new Pair<>(login, since.plusHours(i));
             ArrayList<Commit> commitsOfUserByHour;
-            if (!cachedCommits.containsKey(currentUser) || LocalDateTime.now().getHour() == since.plusHours(i).getHour()) {
-                Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since, since.plusHours(i + 1));
+            if (LocalDateTime.now().getHour() < (i + 9)) {
+                commitsOfUserByHour = null;
+            } else if (!cachedCommits.containsKey(currentUser) || LocalDateTime.now().getHour() == since.plusHours(i).getHour()) {
+                Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since.plusHours(i), since.plusHours(i + 1));
                 commitsOfUserByHour = commits.get(login);
                 cachedCommits.put(currentUser, commitsOfUserByHour);
             } else {
@@ -86,7 +88,7 @@ public class UserHourlyStatService {
             UserHourlyStat stat = new UserHourlyStat();
             if (commitsOfUserByHour == null) {
                 stat.setCommits(0);
-                stat.setDate(since);
+                stat.setDate(since.plusHours(i));
                 stat.setLines(0);
                 stat.setLogin(login);
 
