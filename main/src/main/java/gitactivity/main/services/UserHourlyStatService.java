@@ -62,14 +62,14 @@ public class UserHourlyStatService {
 //        return userHourlyStatRepository.findByLoginAndDateAndHour(login, date, date.getHour());
 //    }
 
-    public ArrayList<UserHourlyStat> getUserHourlyStats(String login) {
-        ArrayList<UserHourlyStat> list = new ArrayList<>();
+    public UserHourlyStat[] getUserHourlyStats(String login) {
+        UserHourlyStat[] list = new UserHourlyStat[10];
 
-        LocalDateTime since = LocalDate.now().atTime(LocalTime.of(9,0));
+        LocalDateTime since = LocalDate.now().atTime(LocalTime.of(9, 0));
 
-        while(since.isBefore(LocalDateTime.now())) {
-            Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since, since.plusHours(1));
-            since = since.plusHours(1);
+
+        for (int i = 0; i < list.length; i++) {
+            Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since, since.plusHours(i));
             ArrayList<Commit> commitsOfUserByHour = commits.get(login);
             UserHourlyStat stat = new UserHourlyStat();
             if (commitsOfUserByHour == null) {
@@ -77,9 +77,9 @@ public class UserHourlyStatService {
                 stat.setDate(since);
                 stat.setLines(0);
                 stat.setLogin(login);
-                continue;
-            }
-            else {
+
+                list[i] = stat;
+            } else {
                 int sumOfChangedLines = 0;
                 for (Commit c : commitsOfUserByHour) {
                     sumOfChangedLines += c.getChangedLines();
@@ -89,13 +89,46 @@ public class UserHourlyStatService {
                 stat.setDate(since.plusHours(1));
                 stat.setLines(sumOfChangedLines);
                 stat.setCommits(commitsOfUserByHour.size());
+
+                list[i] = stat;
             }
-
-
-
-            list.add(stat);
         }
 
         return list;
     }
 }
+
+
+
+//        while(since.isBefore(LocalDateTime.now())) {
+//            Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since, since.plusHours(1));
+//            since = since.plusHours(1);
+//            ArrayList<Commit> commitsOfUserByHour = commits.get(login);
+//            UserHourlyStat stat = new UserHourlyStat();
+//            if (commitsOfUserByHour == null) {
+//                stat.setCommits(0);
+//                stat.setDate(since);
+//                stat.setLines(0);
+//                stat.setLogin(login);
+//                continue;
+//            }
+//            else {
+//                int sumOfChangedLines = 0;
+//                for (Commit c : commitsOfUserByHour) {
+//                    sumOfChangedLines += c.getChangedLines();
+//                }
+//
+//                stat.setLogin(login);
+//                stat.setDate(since.plusHours(1));
+//                stat.setLines(sumOfChangedLines);
+//                stat.setCommits(commitsOfUserByHour.size());
+//            }
+
+
+
+//            list.add(stat);
+//        }
+//
+//        return list;
+
+
