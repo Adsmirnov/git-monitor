@@ -9,6 +9,8 @@ import gitactivity.main.services.UserHourlyStatService;
 import gitactivity.main.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@EnableScheduling
 @Component
 public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
@@ -161,7 +164,13 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         sendText(chatId,"Гойда на месяц");
     }
 
+    @Scheduled(cron = "0 22 12 * * MON-FRI")
+    private void send() throws IOException {
+        sendDay(5312630823L);
+        sendDay(1310543123L);
+    }
     private void sendDay(Long chatId) throws IOException {
+        System.out.println(chatId);
         pictureManager.drawDailyStats();
         ClassPathResource resource = new ClassPathResource("static/goida.png");
         InputStream inputStream = resource.getInputStream();
