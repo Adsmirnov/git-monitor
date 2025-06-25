@@ -208,10 +208,10 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     private void sendMainMenu(Long getchatid){
         SendMessage message = SendMessage.builder().text("Выбери гойду").chatId(getchatid).build();
         var button1 = InlineKeyboardButton.builder().text("Статистика за день").callbackData("day").build();
-        var button2 = InlineKeyboardButton.builder().text("Статистика за месяц").callbackData("month").build();
-        var button3 = InlineKeyboardButton.builder().text("Статистика за промежуток").callbackData("promeg").build();
+//        var button2 = InlineKeyboardButton.builder().text("Статистика за месяц").callbackData("month").build();
+//        var button3 = InlineKeyboardButton.builder().text("Статистика за промежуток").callbackData("promeg").build();
         var button4 = InlineKeyboardButton.builder().text("Имена").callbackData("name").build();
-        List<InlineKeyboardRow> keyboardRow = List.of(new InlineKeyboardRow(button1),new InlineKeyboardRow(button2),new InlineKeyboardRow(button3),new InlineKeyboardRow(button4));
+        List<InlineKeyboardRow> keyboardRow = List.of(new InlineKeyboardRow(button1),new InlineKeyboardRow(button4));
         new InlineKeyboardRow();
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup(keyboardRow);
         message.setReplyMarkup(markup);
