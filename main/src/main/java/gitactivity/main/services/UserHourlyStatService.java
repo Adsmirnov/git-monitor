@@ -6,6 +6,7 @@ import gitactivity.main.model.Commit;
 import gitactivity.main.model.UserHourlyStat;
 import gitactivity.main.repositories.UserHourlyStatRepository;
 import lombok.RequiredArgsConstructor;
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,9 @@ public class UserHourlyStatService {
     private CommitParserService commitParserService;
 
     private ArrayList<String> users = new ArrayList<>();
+
+    // ({Пользователь, время}, коммиты)
+    private HashMap<Pair<String, LocalDateTime>, ArrayList<Commit>> cachedCommits = new HashMap<>();
 
     public void saveUserHourlyStat() {  // Метод для создания и заполнения новой ячейки в базе данных
         userHourlyStatRepository.clearTable();
@@ -68,8 +72,17 @@ public class UserHourlyStatService {
 
         for (int i = 0; i < list.length; i++) {
             System.out.println("[LOG] Получаю статистику за " + (i + 9) + " час");
-            Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since, since.plusHours(i));
-            ArrayList<Commit> commitsOfUserByHour = commits.get(login);
+
+            Pair<String, LocalDateTime> currentUser = new Pair<>(login, since.plusHours(i));
+            ArrayList<Commit> commitsOfUserByHour;
+            if (!cachedCommits.containsKey(currentUser) || LocalDateTime.now().getHour() == since.plusHours(i).getHour()) {
+                Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(since, since.plusHours(i + 1));
+                commitsOfUserByHour = commits.get(login);
+                cachedCommits.put(currentUser, commitsOfUserByHour);
+            } else {
+                commitsOfUserByHour = cachedCommits.get(currentUser);
+            }
+
             UserHourlyStat stat = new UserHourlyStat();
             if (commitsOfUserByHour == null) {
                 stat.setCommits(0);
@@ -85,7 +98,7 @@ public class UserHourlyStatService {
                 }
 
                 stat.setLogin(login);
-                stat.setDate(since.plusHours(1));
+                stat.setDate(since.plusHours(i));
                 stat.setLines(sumOfChangedLines);
                 stat.setCommits(commitsOfUserByHour.size());
 
