@@ -67,16 +67,16 @@ public class PictureManager {
 
 
 
-    private static XYDataset createLineDataset(List<UserHourlyStat> stats) {
+    private static XYDataset createLineDataset(UserHourlyStat[] stats) {
 
         var series1 = new XYSeries("Commits");
-        for(int i = 0; i < stats.size(); i++){
-            series1.add(i+9, stats.get(i).getCommits());
+        for(int i = 0; i < stats.length; i++){
+            series1.add(i+9, stats[i].getCommits());
         }
 
         var series2 = new XYSeries("Lines");
-        for(int i = 0; i < stats.size(); i++){
-            series2.add(i+9, stats.get(i).getLines());
+        for(int i = 0; i < stats.length; i++){
+            series2.add(i+9, stats[i].getLines());
         }
 
         var dataset = new XYSeriesCollection();
@@ -99,7 +99,7 @@ public class PictureManager {
         );
         return chart;
     }
-    public void createLinePicture(List<UserHourlyStat> stats, String name, String userName) throws IOException, InterruptedException {
+    public void createLinePicture(UserHourlyStat[] stats, String name, String userName) throws IOException, InterruptedException {
         XYDataset dataset = createLineDataset(stats);
         String resourcesPath = "main/target/classes/static/";
         JFreeChart chart = createLineChart(dataset, userName);
@@ -117,7 +117,7 @@ public class PictureManager {
     public void mainMethod(String login) throws IOException, InterruptedException {
         PictureManager Picture = new PictureManager();
         String name = "goida.png";
-//        Picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
-        Picture.createBarPicture(userHourlyStatService.getUserHourlyStats(login), name);
+        Picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
+//        Picture.createBarPicture(userHourlyStatService.getUserHourlyStats(login), name);
     }
 }
