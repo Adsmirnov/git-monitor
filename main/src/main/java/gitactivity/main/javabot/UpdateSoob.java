@@ -25,17 +25,18 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @EnableScheduling
 @Component
 public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
+    Logger logger = Logger.getLogger(getClass().getName());
     private final TelegramClient telegramClient;
 
     private Map<String, String> env = System.getenv();
@@ -60,18 +61,19 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private boolean checkWhitelist(String username) {
-        for(User user : userService.getUsers()) {
+        for (User user : userService.getUsers()) {
             if (user.getLogin().equals(username)) {
                 return true;
             }
         }
         return false;
     }
+
     private void setGroupLink(String username) {
         if (!checkWhitelist(username)) {
             return;
         }
-        for(User user : userService.getUsers()) {
+        for (User user : userService.getUsers()) {
             if (user.getLogin().equals(username)) {
                 gitApiService.setGroupLink(user.getGroup());
             }
@@ -80,7 +82,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
 
     @Override
     public void consume(Update update) {
-        if(update.hasCallbackQuery()){
+        if (update.hasCallbackQuery()) {
             // проверка на вайтлист
             String username = update.getCallbackQuery().getFrom().getUserName();
             if (!checkWhitelist(username)) {
@@ -88,13 +90,13 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             }
             setGroupLink(username);
             try {
-                Vozvrat(update.getCallbackQuery());
+                vozvrat(update.getCallbackQuery());
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        if(update.hasMessage()){
-            String messagetext=update.getMessage().getText();
+        if (update.hasMessage()) {
+            String messagetext = update.getMessage().getText();
             Long getchatid = update.getMessage().getChatId();
 
             // проверка на вайтлист
@@ -103,28 +105,28 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
                 return;
             }
             setGroupLink(username);
-            if(messagetext.equals("/start")){
+            if (messagetext.equals("/start")) {
                 sendMainMenu(getchatid);
-            }else{
+            } else {
                 SendMessage message = SendMessage.builder().text("Гойда").chatId(getchatid).build();
                 try {
                     telegramClient.execute(message);
-                }catch(TelegramApiException e){
+                } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
     }
 
-    private void Vozvrat(CallbackQuery callbackQuery) throws IOException, InterruptedException {
+    private void vozvrat(CallbackQuery callbackQuery) throws IOException, InterruptedException {
         var data = callbackQuery.getData();
         var chatId = callbackQuery.getFrom().getId();
-        switch (data){
+        switch (data) {
             case "name" -> sendSpisok(chatId);
             case "day" -> sendDay(chatId);
             case "month" -> sendMonth(chatId);
             default -> {
-                if (data.startsWith("name_")){
+                if (data.startsWith("name_")) {
                     namegraff(chatId, data);
                 } else {
                     sendText(chatId, "Не понял гойду");
@@ -162,7 +164,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void sendMonth(Long chatId) {
-        sendText(chatId,"Гойда на месяц");
+        sendText(chatId, "Гойда на месяц");
     }
 
     @Scheduled(cron = "0 15 11 * * MON-FRI")
@@ -172,13 +174,14 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
             String chatId = user.getChatId();
             if (chatId != null) {
                 gitApiService.setGroupLink(user.getGroup());
-                sendDay(Long.parseLong(chatId.substring(0, chatId.length() -1)));
+                sendDay(Long.parseLong(chatId.substring(0, chatId.length() - 1)));
             }
         }
     }
+
     private void sendDay(Long chatId) throws IOException {
         userDailyStatService.saveUserDailyStat();
-        System.out.println(chatId);
+        logger.info(chatId.toString());
         pictureManager.drawDailyStats();
         ClassPathResource resource = new ClassPathResource("static/goida.png");
         InputStream inputStream = resource.getInputStream();
@@ -202,7 +205,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         for (UserDailyStat stat : dailyStats) {
             names.add(stat.getLogin());
         }
-        nameButton(chatId,names);
+        nameButton(chatId, names);
     }
 
     private void nameButton(Long chatId, ArrayList<String> names) {
@@ -210,7 +213,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         HashSet<InlineKeyboardRow> buttons = new HashSet<>();
         for (String name : names) {
             var button = InlineKeyboardButton.builder().text(name).callbackData("name_" + name).build();
-            buttons.add( new InlineKeyboardRow(button) );
+            buttons.add(new InlineKeyboardRow(button));
         }
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup(buttons.stream().toList());
         message.setReplyMarkup(markup);
@@ -221,13 +224,11 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    private void sendMainMenu(Long getchatid){
+    private void sendMainMenu(Long getchatid) {
         SendMessage message = SendMessage.builder().text("Выберите действие").chatId(getchatid).build();
         var button1 = InlineKeyboardButton.builder().text("Статистика за день").callbackData("day").build();
-//        var button2 = InlineKeyboardButton.builder().text("Статистика за месяц").callbackData("month").build();
-//        var button3 = InlineKeyboardButton.builder().text("Статистика за промежуток").callbackData("promeg").build();
         var button4 = InlineKeyboardButton.builder().text("Имена").callbackData("name").build();
-        List<InlineKeyboardRow> keyboardRow = List.of(new InlineKeyboardRow(button1),new InlineKeyboardRow(button4));
+        List<InlineKeyboardRow> keyboardRow = List.of(new InlineKeyboardRow(button1), new InlineKeyboardRow(button4));
         new InlineKeyboardRow();
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup(keyboardRow);
         message.setReplyMarkup(markup);

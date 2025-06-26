@@ -8,13 +8,9 @@ import gitactivity.main.services.UserHourlyStatService;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
-
-
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-
-
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -22,13 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class PictureManager {
+    Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
     private UserDailyStatService userDailyStatService;
@@ -39,24 +35,25 @@ public class PictureManager {
     private static CategoryDataset createBarDataset(List<UserDailyStat> stats) {
 
         var dataset = new DefaultCategoryDataset();
-        for(UserDailyStat stat : stats){
+        for (UserDailyStat stat : stats) {
             dataset.setValue(stat.getCommits(), "Commits", stat.getLogin());
         }
         return dataset;
     }
+
     private static JFreeChart createBarChart(CategoryDataset dataset) {
 
-        JFreeChart barChart = ChartFactory.createBarChart(
+        return ChartFactory.createBarChart(
                 "",
                 "",
                 "Commits",
                 dataset,
                 PlotOrientation.VERTICAL,
                 false, true, false);
-        return barChart;
     }
-    public void createBarPicture(List<UserDailyStat> stats, String name)throws IOException {
-        System.out.println("[LOG] Строю график");
+
+    public void createBarPicture(List<UserDailyStat> stats, String name) throws IOException {
+        logger.info("Строю граффик");
 
         CategoryDataset dataset = createBarDataset(stats);
         String resourcesPath = "main/target/classes/static/";
@@ -65,18 +62,16 @@ public class PictureManager {
     }
 
 
-
-
     private static XYDataset createLineDataset(UserHourlyStat[] stats) {
 
         var series1 = new XYSeries("Commits");
-        for(int i = 0; i < stats.length; i++){
-            series1.add(i+9, stats[i].getCommits());
+        for (int i = 0; i < stats.length; i++) {
+            series1.add(i + 9, stats[i].getCommits());
         }
 
         var series2 = new XYSeries("Lines");
-        for(int i = 0; i < stats.length; i++){
-            series2.add(i+9, stats[i].getLines());
+        for (int i = 0; i < stats.length; i++) {
+            series2.add(i + 9, stats[i].getLines());
         }
 
         var dataset = new XYSeriesCollection();
@@ -85,9 +80,10 @@ public class PictureManager {
 
         return dataset;
     }
+
     private static JFreeChart createLineChart(XYDataset dataset, String userName) {
 
-        JFreeChart chart = ChartFactory.createXYLineChart(
+        return ChartFactory.createXYLineChart(
                 userName,
                 "Time",
                 "Number",
@@ -97,9 +93,9 @@ public class PictureManager {
                 true,
                 false
         );
-        return chart;
     }
-    public void createLinePicture(UserHourlyStat[] stats, String name, String userName) throws IOException, InterruptedException {
+
+    public void createLinePicture(UserHourlyStat[] stats, String name, String userName) throws IOException {
         XYDataset dataset = createLineDataset(stats);
         String resourcesPath = "main/target/classes/static/";
         JFreeChart chart = createLineChart(dataset, userName);
@@ -107,23 +103,20 @@ public class PictureManager {
     }
 
 
-
-
-    public void deletePicture(String name)throws IOException {
+    public void deletePicture(String name) {
         File file = new File(name);
         file.delete();
     }
 
-    public void drawUserHourlyStats(String login) throws IOException, InterruptedException {
-        PictureManager Picture = new PictureManager();
+    public void drawUserHourlyStats(String login) throws IOException {
+        PictureManager picture = new PictureManager();
         String name = "goida.png";
-        Picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
-//        Picture.createBarPicture(userHourlyStatService.getUserHourlyStats(login), name);
+        picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
     }
 
     public void drawDailyStats() throws IOException {
-        PictureManager Picture = new PictureManager();
+        PictureManager picture = new PictureManager();
         String name = "goida.png";
-        Picture.createBarPicture(userDailyStatService.getStats(), name);
+        picture.createBarPicture(userDailyStatService.getStats(), name);
     }
 }

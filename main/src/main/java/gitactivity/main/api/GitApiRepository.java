@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Repository
 public class GitApiRepository {
@@ -18,7 +19,7 @@ public class GitApiRepository {
     @Autowired
     private Environment environment;
 
-    public void setGroup(String link){
+    public void setGroup(String link) {
         this.groupLink = link;
     }
 
@@ -26,7 +27,7 @@ public class GitApiRepository {
 
         Request request = new Request.Builder()
                 .url(groupLink)
-                .addHeader("PRIVATE-TOKEN", environment.getProperty("gitmonitor.gitapikey"))
+                .addHeader("PRIVATE-TOKEN", Objects.requireNonNull(environment.getProperty("gitmonitor.gitapikey")))
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
