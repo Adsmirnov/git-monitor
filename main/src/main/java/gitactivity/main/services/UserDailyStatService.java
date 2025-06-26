@@ -4,7 +4,6 @@ package gitactivity.main.services;
 import gitactivity.main.api.CommitParserService;
 import gitactivity.main.model.Commit;
 import gitactivity.main.model.UserDailyStat;
-import gitactivity.main.model.UserHourlyStat;
 import gitactivity.main.repositories.UserDailyStatRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -40,13 +39,13 @@ public class UserDailyStatService {
         return userDailyStatRepository.findByLogin(login);
     }
 
-    public List<UserDailyStat> getStats(){
+    public List<UserDailyStat> getStats() {
         return userDailyStatRepository.findAll();
     }
 
     public void saveUserDailyStat() {
         userDailyStatRepository.clearTable();
-        Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(LocalDate.now().atTime(LocalTime.of(9,0)), LocalDate.now().atTime(LocalTime.of(18,0)));
+        Map<String, ArrayList<Commit>> commits = commitParserService.getParsedCommits(LocalDate.now().atTime(LocalTime.of(9, 0)), LocalDate.now().atTime(LocalTime.of(18, 0)));
 
         Set<String> setKeys = commits.keySet();
         users.addAll(setKeys);

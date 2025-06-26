@@ -22,6 +22,7 @@ public class UserService {
     public Optional<User> getUserById(long id) {  // Метод для получения пользователя по айди
         return userRepository.findById(id);
     }
+
     public List<User> getUserByLogin(String login) {  // Метод для получения пользователя по логину
         return userRepository.findUserByLogin(login);
     }

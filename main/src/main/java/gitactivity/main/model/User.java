@@ -3,8 +3,6 @@ package gitactivity.main.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-
 @Entity
 @Table(name = "users")
 @Data

@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class JavabotApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(JavabotApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(JavabotApplication.class, args);
+    }
 
 }

@@ -14,9 +14,12 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.logging.Logger;
 
 @Service
 public class GitApiService {
+    Logger logger = Logger.getLogger(getClass().getName());
 
     private final OkHttpClient client = new OkHttpClient();
 
@@ -66,7 +69,7 @@ public class GitApiService {
 
             Request request = new Request.Builder()
                     .url(repoUrl)
-                    .addHeader("PRIVATE-TOKEN", environment.getProperty("gitmonitor.gitapikey"))
+                    .addHeader("PRIVATE-TOKEN", Objects.requireNonNull(environment.getProperty("gitmonitor.gitapikey")))
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -74,9 +77,9 @@ public class GitApiService {
                     throw new IOException("Запрос к серверу не был успешен: " +
                             response.code() + " " + response.message() + environment.getProperty("gitmonitor.gitapikey"));
                 }
-                repoCommits.add(new Pair<Integer, String>(repoId, response.peekBody(Long.MAX_VALUE).string()));
+                repoCommits.add(new Pair<>(repoId, response.peekBody(Long.MAX_VALUE).string()));
             } catch (IOException e) {
-                System.out.println(e);
+                logger.info("Exception");
             }
         }
         return repoCommits;
@@ -98,7 +101,7 @@ public class GitApiService {
 
         Request request = new Request.Builder()
                 .url(repoUrl)
-                .addHeader("PRIVATE-TOKEN", environment.getProperty("gitmonitor.gitapikey"))
+                .addHeader("PRIVATE-TOKEN", Objects.requireNonNull(environment.getProperty("gitmonitor.gitapikey")))
                 .build();
 
         Integer changedLines = 0;
@@ -121,9 +124,7 @@ public class GitApiService {
 
         ArrayList<Integer> repoIds = getRepoIds(rawApiData);
 
-        ArrayList<Pair<Integer, String>> allCommits = getCommitsFromRepos(repoIds, since.minusHours(3), until.minusHours(3));
-
-        return allCommits;
+        return getCommitsFromRepos(repoIds, since.minusHours(3), until.minusHours(3));
     }
 
     public void setGroupLink(String link) {
