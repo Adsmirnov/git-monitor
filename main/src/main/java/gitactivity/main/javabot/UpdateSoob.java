@@ -215,7 +215,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void sendMainMenu(Long getchatid){
-        SendMessage message = SendMessage.builder().text("Выбери гойду").chatId(getchatid).build();
+        SendMessage message = SendMessage.builder().text("Выберите действие").chatId(getchatid).build();
         var button1 = InlineKeyboardButton.builder().text("Статистика за день").callbackData("day").build();
 //        var button2 = InlineKeyboardButton.builder().text("Статистика за месяц").callbackData("month").build();
 //        var button3 = InlineKeyboardButton.builder().text("Статистика за промежуток").callbackData("promeg").build();
