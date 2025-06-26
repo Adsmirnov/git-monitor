@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -206,12 +207,12 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
 
     private void nameButton(Long chatId, ArrayList<String> names) {
         SendMessage message = SendMessage.builder().text("Выберите сотрудника").chatId(chatId).build();
-        List<InlineKeyboardRow> buttons = new ArrayList<>();
+        HashSet<InlineKeyboardRow> buttons = new HashSet<>();
         for (String name : names) {
             var button = InlineKeyboardButton.builder().text(name).callbackData("name_" + name).build();
             buttons.add( new InlineKeyboardRow(button) );
         }
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup(buttons);
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup(buttons.stream().toList());
         message.setReplyMarkup(markup);
         try {
             telegramClient.execute(message);
