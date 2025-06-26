@@ -19,4 +19,7 @@ public class User {
     @Column(name = "group")
     private String group;
 
+    @Column(name = "chatid")
+    private String chatId;
+
 }

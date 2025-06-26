@@ -164,10 +164,12 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         sendText(chatId,"Гойда на месяц");
     }
 
-    @Scheduled(cron = "0 22 12 * * MON-FRI")
+    @Scheduled(cron = "0 0 18 * * MON-FRI")
     private void send() throws IOException {
-        sendDay(5312630823L);
-        sendDay(1310543123L);
+        List<User> users = userService.getUsers();
+        for (User user : users) {
+            sendDay(Long.valueOf(user.getChatId()));
+        }
     }
     private void sendDay(Long chatId) throws IOException {
         userDailyStatService.saveUserDailyStat();
