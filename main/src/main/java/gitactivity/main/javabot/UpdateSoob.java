@@ -170,6 +170,7 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
         sendDay(1310543123L);
     }
     private void sendDay(Long chatId) throws IOException {
+        userDailyStatService.saveUserDailyStat();
         System.out.println(chatId);
         pictureManager.drawDailyStats();
         ClassPathResource resource = new ClassPathResource("static/goida.png");
@@ -189,7 +190,6 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void sendSpisok(Long chatId) {
-        userDailyStatService.saveUserDailyStat();
         List<UserDailyStat> dailyStats = userDailyStatService.getStats();
         ArrayList<String> names = new ArrayList<>();
         for (UserDailyStat stat : dailyStats) {
