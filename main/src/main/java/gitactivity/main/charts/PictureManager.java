@@ -26,11 +26,14 @@ import java.util.logging.Logger;
 public class PictureManager {
     Logger logger = Logger.getLogger(getClass().getName());
 
-    @Autowired
-    private UserDailyStatService userDailyStatService;
+    private final UserDailyStatService userDailyStatService;
 
-    @Autowired
-    private UserHourlyStatService userHourlyStatService;
+    private final UserHourlyStatService userHourlyStatService;
+
+    public PictureManager(UserDailyStatService userDailyStatService, UserHourlyStatService userHourlyStatService) {
+        this.userDailyStatService = userDailyStatService;
+        this.userHourlyStatService = userHourlyStatService;
+    }
 
     private static CategoryDataset createBarDataset(List<UserDailyStat> stats) {
 
@@ -109,13 +112,13 @@ public class PictureManager {
     }
 
     public void drawUserHourlyStats(String login) throws IOException {
-        PictureManager picture = new PictureManager();
+        PictureManager picture = new PictureManager(userDailyStatService, userHourlyStatService);
         String name = "goida.png";
         picture.createLinePicture(userHourlyStatService.getUserHourlyStats(login), name, login);
     }
 
     public void drawDailyStats() throws IOException {
-        PictureManager picture = new PictureManager();
+        PictureManager picture = new PictureManager(userDailyStatService, userHourlyStatService);
         String name = "goida.png";
         picture.createBarPicture(userDailyStatService.getStats(), name);
     }

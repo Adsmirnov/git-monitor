@@ -19,14 +19,17 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 public class UserDailyStatService {
 
-    @Autowired
-    private UserDailyStatRepository userDailyStatRepository;
 
-    @Autowired
-    private CommitParserService commitParserService;
+    private final UserDailyStatRepository userDailyStatRepository;
+
+    private final CommitParserService commitParserService;
+
+    public UserDailyStatService(UserDailyStatRepository userDailyStatRepository, CommitParserService commitParserService) {
+        this.userDailyStatRepository = userDailyStatRepository;
+        this.commitParserService = commitParserService;
+    }
 
     private ArrayList<String> users = new ArrayList<>();
 

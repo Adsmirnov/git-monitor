@@ -21,11 +21,15 @@ import java.util.logging.Logger;
 public class UserHourlyStatService {
     Logger logger = Logger.getLogger(getClass().getName());
 
-    @Autowired
+
     private UserHourlyStatRepository userHourlyStatRepository;
 
-    @Autowired
     private CommitParserService commitParserService;
+
+    public UserHourlyStatService(UserHourlyStatRepository userHourlyStatRepository, CommitParserService commitParserService) {
+        this.userHourlyStatRepository = userHourlyStatRepository;
+        this.commitParserService = commitParserService;
+    }
 
     private ArrayList<String> users = new ArrayList<>();
 

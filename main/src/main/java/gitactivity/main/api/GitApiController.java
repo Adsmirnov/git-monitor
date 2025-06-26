@@ -13,11 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class GitApiController {  // Класс создан для тестов программы, в конечном результате будет убран
 
-    @Autowired
+
     private UserHourlyStatService userHourlyStatService;
 
-    @Autowired
     private UserDailyStatService userDailyStatService;
+
+    public GitApiController(UserHourlyStatService userHourlyStatService, UserDailyStatService userDailyStatService) {
+        this.userHourlyStatService = userHourlyStatService;
+        this.userDailyStatService = userDailyStatService;
+    }
 
     @GetMapping("/get/commits")
     public String getCommits() {

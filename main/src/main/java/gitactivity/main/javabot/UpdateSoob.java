@@ -41,24 +41,27 @@ public class UpdateSoob implements LongPollingSingleThreadUpdateConsumer {
 
     private Map<String, String> env = System.getenv();
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private UserDailyStatService userDailyStatService;
+    private final UserDailyStatService userDailyStatService;
 
-    @Autowired
-    private GitApiService gitApiService;
+    private final GitApiService gitApiService;
 
-    @Autowired
-    private PictureManager pictureManager;
+    private final PictureManager pictureManager;
 
-    @Autowired
-    private UserHourlyStatService userHourlyStatService;
+    private final UserHourlyStatService userHourlyStatService;
 
-    public UpdateSoob() {
-        this.telegramClient = new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
+    public UpdateSoob(UserService userService, UserDailyStatService userDailyStatService, GitApiService gitApiService, PictureManager pictureManager, UserHourlyStatService userHourlyStatService) {
+
+        this.telegramClient =  new OkHttpTelegramClient(env.get("TG_BOT_TOKEN"));
+        this.userService = userService;
+        this.userDailyStatService = userDailyStatService;
+        this.gitApiService = gitApiService;
+        this.pictureManager = pictureManager;
+        this.userHourlyStatService = userHourlyStatService;
     }
+
+
 
     private boolean checkWhitelist(String username) {
         for (User user : userService.getUsers()) {

@@ -18,8 +18,12 @@ public class CommitParserService {
 
     private HashMap<String, ArrayList<Commit>> parsedCommits = new HashMap<>();
 
-    @Autowired
-    GitApiService gitApiService;
+
+    private final GitApiService gitApiService;
+
+    public CommitParserService(GitApiService gitApiService) {
+        this.gitApiService = gitApiService;
+    }
 
     public Map<String, ArrayList<Commit>> getParsedCommits(LocalDateTime since, LocalDateTime until) {
         parsedCommits.clear();

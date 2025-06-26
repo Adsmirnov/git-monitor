@@ -16,8 +16,11 @@ public class GitApiRepository {
     private String groupLink = "";
     private final OkHttpClient client = new OkHttpClient();
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+
+    public GitApiRepository(Environment environment) {
+        this.environment = environment;
+    }
 
     public void setGroup(String link) {
         this.groupLink = link;

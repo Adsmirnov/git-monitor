@@ -23,11 +23,15 @@ public class GitApiService {
 
     private final OkHttpClient client = new OkHttpClient();
 
-    @Autowired
-    private Environment environment;
 
-    @Autowired
-    GitApiRepository gitApiRepository;
+    private final Environment environment;
+
+    private final GitApiRepository gitApiRepository;
+
+    public GitApiService(Environment environment, GitApiRepository gitApiRepository) {
+        this.environment = environment;
+        this.gitApiRepository = gitApiRepository;
+    }
 
     private ArrayList<Integer> getRepoIds(String rawApiData) {  // Метод для получения списка айди всех репозиториев данной группы
         JSONObject group = new JSONObject(rawApiData);

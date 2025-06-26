@@ -19,6 +19,8 @@ public class BotTaken implements SpringLongPollingBot {
     @Autowired
     private Environment environment;
 
+
+
     @Override
     public String getBotToken() {
         return environment.getProperty("gitmonitor.bottoken");
