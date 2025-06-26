@@ -1,0 +1,21 @@
+create table users(
+"id" SERIAL PRIMARY KEY,
+login varchar(50),
+group carchar(255)
+);
+
+create table statofuser(
+"id" SERIAL PRIMARY KEY,
+login varchar(255),
+commits int,
+lines int,
+date timestamp
+);
+
+create table statofuserbyhour(
+"id" SERIAL PRIMARY KEY,
+login varchar(255),
+commits int,
+lines int,
+date timestamp
+);
